@@ -13,8 +13,7 @@ namespace SleekFlow.Todo.Infrastructure.Test
         [Test]
         public async Task Embedded_EventStore_Connect_Append_Read_Simple_Test()
         {
-            var db = new EmbeddedEventStore();
-            await db.Connection.ConnectAsync();
+            var db = new EmbeddedEventStoreDb();
             
             var expected = "{\"Foo\":\"Bar\"}";
 

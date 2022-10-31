@@ -6,13 +6,13 @@ using System.Diagnostics;
 
 namespace SleekFlow.Todo.Infrastructure
 {
-    public class EmbeddedEventStore
+    public class EmbeddedEventStoreDb
     {
         private static readonly TimeSpan TimeToStop = TimeSpan.FromSeconds(5);
 
         private ClusterVNode _node;
 
-        public EmbeddedEventStore()
+        public EmbeddedEventStoreDb()
         {
             var nodeBuilder = EmbeddedVNodeBuilder
                 .AsSingleNode()
@@ -23,6 +23,8 @@ namespace SleekFlow.Todo.Infrastructure
             _node.StartAsync(true).Wait();
 
             Connection = EmbeddedEventStoreConnection.Create(_node);
+
+            Connection.ConnectAsync().Wait();
         }
 
         public IEventStoreConnection Connection { get; }
