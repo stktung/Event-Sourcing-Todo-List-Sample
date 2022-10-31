@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Infrastructure.Test", "SleekFlow.Todo.Infrastructure.Test\SleekFlow.Todo.Infrastructure.Test.csproj", "{89CF2FB0-6563-4B74-A80D-7D328D2C1F75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB", "SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.csproj", "{59DBE14A-7AA8-4FB1-9982-499C0550157A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{89CF2FB0-6563-4B74-A80D-7D328D2C1F75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89CF2FB0-6563-4B74-A80D-7D328D2C1F75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89CF2FB0-6563-4B74-A80D-7D328D2C1F75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59DBE14A-7AA8-4FB1-9982-499C0550157A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59DBE14A-7AA8-4FB1-9982-499C0550157A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59DBE14A-7AA8-4FB1-9982-499C0550157A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59DBE14A-7AA8-4FB1-9982-499C0550157A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

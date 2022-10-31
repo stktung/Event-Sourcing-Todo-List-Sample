@@ -1,5 +1,6 @@
 using System.Text;
 using EventStore.ClientAPI;
+using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 
 namespace SleekFlow.Todo.Infrastructure.Test
 {

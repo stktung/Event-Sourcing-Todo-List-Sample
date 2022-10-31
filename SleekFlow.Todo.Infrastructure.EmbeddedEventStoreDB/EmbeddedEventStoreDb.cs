@@ -1,10 +1,8 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Embedded;
 using EventStore.Core;
-using Microsoft.Diagnostics.Tracing.Parsers.Tpl;
-using System.Diagnostics;
 
-namespace SleekFlow.Todo.Infrastructure
+namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
 {
     public class EmbeddedEventStoreDb
     {
