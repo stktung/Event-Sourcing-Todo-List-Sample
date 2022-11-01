@@ -7,6 +7,6 @@ public class TodoAutoMapperProfile : Profile
 {
     public TodoAutoMapperProfile()
     {
-        CreateMap<TodoItemProjection, GetResponse>();
+        CreateMap<TodoItemProjection, GetTodoResponse>();
     }
 }

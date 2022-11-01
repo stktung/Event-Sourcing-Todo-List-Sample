@@ -25,13 +25,13 @@ namespace SleekFlow.Todo.Application.Controllers
 
         [Route("{id:guid}")]
         [HttpGet]
-        public async Task<GetResponse> GetAsync([FromRoute]Guid id)
+        public async Task<GetTodoResponse> GetAsync([FromRoute]Guid id)
         {
-            return _mapper.Map<GetResponse>(await _service.GetAsync(id));
+            return _mapper.Map<GetTodoResponse>(await _service.GetAsync(id));
         }
     }
 
     public record CreateTodoResponse(Guid Id);
 
-    public record GetResponse(Guid Id);
+    public record GetTodoResponse(Guid Id);
 }

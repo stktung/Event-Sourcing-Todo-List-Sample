@@ -20,5 +20,8 @@
     <ProjectReference Include="..\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.csproj" />
     <ProjectReference Include="..\SleekFlow.Todo.Infrastructure\SleekFlow.Todo.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup>
+	<InternalsVisibleTo Include="SleekFlow.Todo.IntegrationTest" />
+  </ItemGroup>
 
 </Project>
