@@ -2,7 +2,7 @@
 
 public interface IEvent
 {
-    int EventNumber { get; set; }
+    long EventNumber { get; set; }
     string RaisedBy { get; set; }
     DateTime RaisedAt { get; set; }
 }

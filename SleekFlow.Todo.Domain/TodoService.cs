@@ -19,5 +19,10 @@ namespace SleekFlow.Todo.Domain
 
             return todo.Id;
         }
+
+        public async Task<TodoItem?> GetAsync(Guid id)
+        {
+            return await _repository.GetAsync(id);
+        }
     }
 }

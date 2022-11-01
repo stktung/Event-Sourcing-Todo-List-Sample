@@ -4,11 +4,13 @@ using EventStore.Core;
 
 namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
 {
-    public class EmbeddedEventStoreDb
+    public class EmbeddedEventStoreDb : IEventStore
     {
         private static readonly TimeSpan TimeToStop = TimeSpan.FromSeconds(5);
 
         private ClusterVNode _node;
+
+        public IEventStoreConnection Connection { get; }
 
         public EmbeddedEventStoreDb()
         {
@@ -25,12 +27,15 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
             Connection.ConnectAsync().Wait();
         }
 
-        public IEventStoreConnection Connection { get; }
 
         public void Dispose()
         {
             Connection?.Close();
             _node.StopAsync(TimeToStop).Wait();
         }
+    }
+
+    public interface IEventStore
+    {
     }
 }

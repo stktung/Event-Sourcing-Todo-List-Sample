@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
 {
     public class TodoItem : EventSourcedAggregate
     {
-        public Guid Id { get; } = new();
+        public Guid Id { get; private set; } = new();
 
         private TodoItem()
         {
@@ -22,21 +21,32 @@ namespace SleekFlow.Todo.Domain.Aggregate
             
             return todo;
         }
-    }
 
-    public abstract class EventSourcedAggregate
-    {
-        private readonly List<IEvent> _pastEvents = new();
-        private readonly List<IEvent> _newEvents = new();
-
-        protected void Raise(IEvent e)
+        private void Apply(IEvent e) 
         {
-            _newEvents.Add(e);
+            switch (e)
+            {
+                case TodoCreatedEvent todoCreatedEvent:
+                    Apply(todoCreatedEvent);
+                    break;
+            }
         }
 
-        public int PreviousRevision => _pastEvents.Count() - 1;
+        private void Apply(TodoCreatedEvent e)
+        {
+            Id = e.Id;
+        }
 
-        public ReadOnlyCollection<IEvent> NewEvents => _newEvents.AsReadOnly();
+        public static TodoItem Load(IEnumerable<IEvent> events)
+        {
+            var todo = new TodoItem();
+            
+            foreach (var e in events)
+            {
+                todo.Apply(e);
+            }
 
+            return todo;
+        }
     }
 }
