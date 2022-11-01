@@ -25,9 +25,12 @@ namespace SleekFlow.Todo.Application.Controllers
 
         [Route("{id:guid}")]
         [HttpGet]
-        public async Task<GetTodoResponse> GetAsync([FromRoute]Guid id)
+        public async Task<IActionResult> GetAsync([FromRoute]Guid id)
         {
-            return _mapper.Map<GetTodoResponse>(await _service.GetAsync(id));
+            var todo = await _service.GetAsync(id);
+            if (todo == null) return NotFound();
+
+            return Ok(_mapper.Map<GetTodoResponse>(todo));
         }
     }
 

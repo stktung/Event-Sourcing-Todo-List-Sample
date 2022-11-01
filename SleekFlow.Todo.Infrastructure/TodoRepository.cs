@@ -26,7 +26,11 @@ namespace SleekFlow.Todo.Infrastructure
         public async Task<TodoItemProjection?> GetAsync(Guid id)
         {
             var domainEvents = new List<IEvent>();
-            foreach (var esEvent in await _eventStore.ReadAllAsync(BuildStreamName(id)))
+            var events = await _eventStore.ReadAllAsync(BuildStreamName(id));
+
+            if (events == null) return null;
+
+            foreach (var esEvent in events)
             {
                 switch (esEvent.Event.EventType)
                 {
