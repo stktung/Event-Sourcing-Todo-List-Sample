@@ -4,14 +4,13 @@ using SleekFlow.Todo.Domain.Aggregate;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 using System.Text;
 using EventStore.ClientAPI;
-using static EventStore.Core.Services.Storage.ReaderIndex.EventFilter;
-using System.Data.Common;
 
 namespace SleekFlow.Todo.Infrastructure
 {
     public class TodoRepository : ITodoRepository
     {
         private const string StreamPrefix = "TodoItem-";
+        private const int EventStoreReadStreamMaxCount = 4096;
         private readonly IEventStore _eventStore;
 
         public TodoRepository(IEventStore eventStore)
@@ -49,7 +48,7 @@ namespace SleekFlow.Todo.Infrastructure
         {
             var slice =
                 await _eventStore.Connection.ReadStreamEventsForwardAsync(BuildStreamName(id), StreamPosition.Start,
-                    int.MaxValue, true);
+                    EventStoreReadStreamMaxCount, true);
 
             if (slice.Status == SliceReadStatus.StreamNotFound)
                 return null;

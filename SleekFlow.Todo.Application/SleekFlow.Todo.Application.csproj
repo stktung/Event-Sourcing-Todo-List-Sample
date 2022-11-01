@@ -14,4 +14,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SleekFlow.Todo.Domain\SleekFlow.Todo.Domain.csproj" />
+    <ProjectReference Include="..\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.csproj" />
+    <ProjectReference Include="..\SleekFlow.Todo.Infrastructure\SleekFlow.Todo.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using SleekFlow.Todo.Domain;
+using SleekFlow.Todo.Domain.Aggregate;
 
 namespace SleekFlow.Todo.Application.Controllers
 {
@@ -6,14 +8,26 @@ namespace SleekFlow.Todo.Application.Controllers
     [Route("[controller]")]
     public class TodoController : ControllerBase
     {
-        public TodoController()
+        private readonly ITodoService _service;
+
+        public TodoController(ITodoService service)
         {
+            _service = service;
         }
         
         [HttpPost]
-        public Task CreateTodo()
+        public async Task<CreateTodoResponse> CreateTodoAsync()
         {
-            throw new NotImplementedException();
+            return new CreateTodoResponse(await _service.CreateTodoAsync());
         }
+
+        [HttpGet]
+        public async Task<TodoItem> GetAsync(Guid id)
+        {
+            return await _service.GetAsync(id);
+        }
+
     }
+
+    public record CreateTodoResponse(Guid Id);
 }

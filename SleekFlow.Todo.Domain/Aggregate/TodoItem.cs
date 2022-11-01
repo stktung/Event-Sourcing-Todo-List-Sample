@@ -8,7 +8,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
 {
     public class TodoItem : EventSourcedAggregate
     {
-        public Guid Id { get; private set; } = new();
+        public Guid Id { get; private set; }
 
         private TodoItem()
         {
@@ -17,6 +17,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
         public static TodoItem Create()
         {
             var todo = new TodoItem();
+            todo.Id = Guid.NewGuid();
+
             todo.Raise(new TodoCreatedEvent());
             
             return todo;

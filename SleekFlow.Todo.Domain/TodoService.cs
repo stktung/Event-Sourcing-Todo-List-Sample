@@ -2,7 +2,7 @@
 
 namespace SleekFlow.Todo.Domain
 {
-    public class TodoService
+    public class TodoService : ITodoService
     {
         private readonly ITodoRepository _repository;
 

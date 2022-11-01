@@ -34,8 +34,4 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
             _node.StopAsync(TimeToStop).Wait();
         }
     }
-
-    public interface IEventStore
-    {
-    }
 }
