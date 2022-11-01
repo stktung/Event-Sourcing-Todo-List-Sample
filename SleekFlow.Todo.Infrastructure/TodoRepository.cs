@@ -4,6 +4,7 @@ using SleekFlow.Todo.Domain.Aggregate;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 using System.Text;
 using EventStore.ClientAPI;
+using SleekFlow.Todo.Domain.Projection;
 
 namespace SleekFlow.Todo.Infrastructure
 {
@@ -18,7 +19,7 @@ namespace SleekFlow.Todo.Infrastructure
             _eventStore = eventStore;
         }
 
-        public async Task Save(TodoItem todo)
+        public async Task Save(TodoItemAggregate todo)
         {
             var db = new EmbeddedEventStoreDb();
 
@@ -44,7 +45,7 @@ namespace SleekFlow.Todo.Infrastructure
             await transaction.CommitAsync();
         }
 
-        public async Task<TodoItem?> GetAsync(Guid id)
+        public async Task<TodoItemProjection?> GetAsync(Guid id)
         {
             var slice =
                 await _eventStore.Connection.ReadStreamEventsForwardAsync(BuildStreamName(id), StreamPosition.Start,
@@ -70,7 +71,7 @@ namespace SleekFlow.Todo.Infrastructure
                 }
             }
 
-            return TodoItem.Load(domainEvents);
+            return TodoItemProjection.Load(domainEvents);
         }
 
         public static string BuildStreamName(Guid id) => $"{StreamPrefix}{id}";

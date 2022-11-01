@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SleekFlow.Todo.Domain.Aggregate
+﻿namespace SleekFlow.Todo.Domain.Aggregate
 {
-    public class TodoItem : EventSourcedAggregate
+    public class TodoItemAggregate : EventSourcedAggregate
     {
         public Guid Id { get; private set; }
 
-        private TodoItem()
+        private TodoItemAggregate()
         {
         }
 
-        public static TodoItem Create()
+        public static TodoItemAggregate Create()
         {
-            var todo = new TodoItem();
+            var todo = new TodoItemAggregate();
             todo.Id = Guid.NewGuid();
 
             todo.Raise(new TodoCreatedEvent());
@@ -39,9 +33,9 @@ namespace SleekFlow.Todo.Domain.Aggregate
             Id = e.Id;
         }
 
-        public static TodoItem Load(IEnumerable<IEvent> events)
+        public static TodoItemAggregate Load(IEnumerable<IEvent> events)
         {
-            var todo = new TodoItem();
+            var todo = new TodoItemAggregate();
             
             foreach (var e in events)
             {

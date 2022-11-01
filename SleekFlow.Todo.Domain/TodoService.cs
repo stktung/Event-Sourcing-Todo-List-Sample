@@ -1,4 +1,5 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
+using SleekFlow.Todo.Domain.Projection;
 
 namespace SleekFlow.Todo.Domain
 {
@@ -13,14 +14,14 @@ namespace SleekFlow.Todo.Domain
 
         public async Task<Guid> CreateTodoAsync()
         {
-            var todo = TodoItem.Create();
+            var todo = TodoItemAggregate.Create();
 
             await _repository.Save(todo);
 
             return todo.Id;
         }
 
-        public async Task<TodoItem?> GetAsync(Guid id)
+        public async Task<TodoItemProjection?> GetAsync(Guid id)
         {
             return await _repository.GetAsync(id);
         }

@@ -16,6 +16,7 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 builder.Services.AddScoped<IEventStore, EmbeddedEventStoreDb>();
 
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 

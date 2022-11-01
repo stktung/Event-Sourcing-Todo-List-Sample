@@ -1,6 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SleekFlow.Todo.Domain;
-using SleekFlow.Todo.Domain.Aggregate;
 
 namespace SleekFlow.Todo.Application.Controllers
 {
@@ -9,12 +9,15 @@ namespace SleekFlow.Todo.Application.Controllers
     public class TodoController : ControllerBase
     {
         private readonly ITodoService _service;
+        private readonly IMapper _mapper;
 
-        public TodoController(ITodoService service)
+        public TodoController(ITodoService service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
         
+        // TODO: Update API name to /todo/create
         [HttpPost]
         public async Task<CreateTodoResponse> CreateTodoAsync()
         {
@@ -22,12 +25,13 @@ namespace SleekFlow.Todo.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<TodoItem> GetAsync(Guid id)
+        public async Task<GetResponse> GetAsync(Guid id)
         {
-            return await _service.GetAsync(id);
+            return _mapper.Map<GetResponse>(await _service.GetAsync(id));
         }
-
     }
 
     public record CreateTodoResponse(Guid Id);
+
+    public record GetResponse(Guid Id);
 }
