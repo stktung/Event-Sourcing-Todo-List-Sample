@@ -1,10 +1,12 @@
 using System.Text;
 using EventStore.ClientAPI;
+using Newtonsoft.Json;
+using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 
 namespace SleekFlow.Todo.Infrastructure.Test
 {
-    public class Tests
+    public class EmbeddedEventStoreTests
     {
         [SetUp]
         public void Setup()
@@ -33,6 +35,27 @@ namespace SleekFlow.Todo.Infrastructure.Test
 
             Assert.IsNotNull(eventReadResult);
             Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public async Task EmbeddedEventStoreDb_Simple_Append_Event_And_ReadAll_Returns_Event()
+        {
+            var db = new EmbeddedEventStoreDb();
+
+            var expected = new TestEvent() { TestMessage = "TestMessageHere!"};
+            await db.AppendAsync("test", -1, new[] { expected });
+            var events = await db.ReadAllAsync("test");
+
+            var actual = JsonConvert.DeserializeObject<TestEvent>(Encoding.UTF8.GetString(events.First().Event.Data));
+            Assert.That(actual.TestMessage, Is.EqualTo(expected.TestMessage));
+        }
+
+        public class TestEvent : IEvent
+        {
+            public string TestMessage { get; set; }
+            public long EventNumber { get; set; }
+            public string RaisedBy { get; set; }
+            public DateTime RaisedAt { get; set; }
         }
     }
 }

@@ -10,4 +10,8 @@
     <PackageReference Include="EventStore.Client.Embedded" Version="20.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SleekFlow.Todo.Domain\SleekFlow.Todo.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

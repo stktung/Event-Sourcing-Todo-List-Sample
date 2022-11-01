@@ -16,16 +16,16 @@ namespace SleekFlow.Todo.Application.Controllers
             _service = service;
             _mapper = mapper;
         }
-        
-        // TODO: Update API name to /todo/create
-        [HttpPost]
+
+        [HttpPost("create")]
         public async Task<CreateTodoResponse> CreateTodoAsync()
         {
             return new CreateTodoResponse(await _service.CreateTodoAsync());
         }
 
+        [Route("{id:guid}")]
         [HttpGet]
-        public async Task<GetResponse> GetAsync(Guid id)
+        public async Task<GetResponse> GetAsync([FromRoute]Guid id)
         {
             return _mapper.Map<GetResponse>(await _service.GetAsync(id));
         }

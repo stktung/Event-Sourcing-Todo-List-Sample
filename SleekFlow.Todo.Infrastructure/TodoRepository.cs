@@ -11,7 +11,6 @@ namespace SleekFlow.Todo.Infrastructure
     public class TodoRepository : ITodoRepository
     {
         private const string StreamPrefix = "TodoItem-";
-        private const int EventStoreReadStreamMaxCount = 4096;
         private readonly IEventStore _eventStore;
 
         public TodoRepository(IEventStore eventStore)
@@ -21,41 +20,13 @@ namespace SleekFlow.Todo.Infrastructure
 
         public async Task Save(TodoItemAggregate todo)
         {
-            var db = new EmbeddedEventStoreDb();
-
-            using var transaction =
-                await db.Connection.StartTransactionAsync(BuildStreamName(todo.Id), todo.PreviousRevision);
-
-            foreach (var e in todo.NewEvents)
-            {
-                var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(e));
-                var metadata = Encoding.UTF8.GetBytes("{}");
-
-                var eventPayload = new EventData(
-                    Guid.NewGuid(),
-                    e.GetType().Name,
-                    true,
-                    data,
-                    metadata);
-
-
-                await transaction.WriteAsync(eventPayload);
-            }
-
-            await transaction.CommitAsync();
+            await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.PreviousRevision, todo.NewEvents);
         }
 
         public async Task<TodoItemProjection?> GetAsync(Guid id)
         {
-            var slice =
-                await _eventStore.Connection.ReadStreamEventsForwardAsync(BuildStreamName(id), StreamPosition.Start,
-                    EventStoreReadStreamMaxCount, true);
-
-            if (slice.Status == SliceReadStatus.StreamNotFound)
-                return null;
-
             var domainEvents = new List<IEvent>();
-            foreach (var esEvent in slice.Events)
+            foreach (var esEvent in await _eventStore.ReadAllAsync(BuildStreamName(id)))
             {
                 switch (esEvent.Event.EventType)
                 {
@@ -74,6 +45,6 @@ namespace SleekFlow.Todo.Infrastructure
             return TodoItemProjection.Load(domainEvents);
         }
 
-        public static string BuildStreamName(Guid id) => $"{StreamPrefix}{id}";
+        public string BuildStreamName(Guid id) => $"{StreamPrefix}-{id}";
     }
 }

@@ -4,8 +4,16 @@ namespace SleekFlow.Todo.Domain.Aggregate;
 
 public abstract class EventSourcedAggregate
 {
-    private readonly List<IEvent> _pastEvents = new();
-    private readonly List<IEvent> _newEvents = new();
+    protected readonly List<IEvent> _pastEvents = new();
+    protected readonly List<IEvent> _newEvents = new();
+    protected readonly string _streamPrefix;
+
+    protected EventSourcedAggregate(string streamPrefix)
+    {
+        _streamPrefix = streamPrefix;
+    }
+
+    public Guid Id { get; protected set; }
 
     protected void Raise(IEvent e)
     {
@@ -15,4 +23,6 @@ public abstract class EventSourcedAggregate
     public int PreviousRevision => _pastEvents.Count() - 1;
 
     public ReadOnlyCollection<IEvent> NewEvents => _newEvents.AsReadOnly();
+
+    
 }

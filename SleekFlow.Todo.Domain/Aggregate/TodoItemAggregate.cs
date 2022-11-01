@@ -2,18 +2,18 @@
 {
     public class TodoItemAggregate : EventSourcedAggregate
     {
-        public Guid Id { get; private set; }
-
-        private TodoItemAggregate()
+        private TodoItemAggregate() : base("Todo")
         {
         }
 
         public static TodoItemAggregate Create()
         {
-            var todo = new TodoItemAggregate();
-            todo.Id = Guid.NewGuid();
+            var todo = new TodoItemAggregate
+            {
+                Id = Guid.NewGuid()
+            };
 
-            todo.Raise(new TodoCreatedEvent());
+            todo.Raise(new TodoCreatedEvent { Id = todo.Id });
             
             return todo;
         }

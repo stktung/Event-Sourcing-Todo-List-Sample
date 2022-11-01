@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
-builder.Services.AddScoped<IEventStore, EmbeddedEventStoreDb>();
+builder.Services.AddSingleton<IEventStore, EmbeddedEventStoreDb>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
