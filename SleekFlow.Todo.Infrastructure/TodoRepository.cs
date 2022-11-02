@@ -18,9 +18,9 @@ namespace SleekFlow.Todo.Infrastructure
             _eventStore = eventStore;
         }
 
-        public async Task Save(TodoItemAggregate todo)
+        public async Task<long> Save(TodoItemAggregate todo)
         {
-            await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.PreviousRevision, todo.NewEvents);
+            return await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.PreviousRevision, todo.NewEvents);
         }
 
         public async Task<TodoItemProjection?> GetAsync(Guid id)
@@ -40,7 +40,8 @@ namespace SleekFlow.Todo.Infrastructure
                                 Encoding.UTF8.GetString(esEvent.Event.Data));
 
                         e.EventNumber = esEvent.Event.EventNumber;
-                        
+                        e.RaisedAt = DateTimeOffset.FromUnixTimeMilliseconds(esEvent.Event.CreatedEpoch).UtcDateTime;
+
                         domainEvents.Add(e);
                         break;
                 }

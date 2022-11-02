@@ -16,11 +16,13 @@ namespace SleekFlow.Todo.Application.Controllers
             _service = service;
             _mapper = mapper;
         }
-
+        
         [HttpPost("create")]
         public async Task<CreateTodoResponse> CreateTodoAsync()
         {
-            return new CreateTodoResponse(await _service.CreateTodoAsync());
+            var result = await _service.CreateTodoAsync();
+
+            return new CreateTodoResponse(result.Id, result.LastEventNumber);
         }
 
         [Route("{id:guid}")]
@@ -34,7 +36,9 @@ namespace SleekFlow.Todo.Application.Controllers
         }
     }
 
-    public record CreateTodoResponse(Guid Id);
+    public record CreateTodoResponse(Guid Id, long LastEventNumber);
 
-    public record GetTodoResponse(Guid Id);
+    public record GetTodoResponse(Guid Id, string? Name, string? Description, DateTime? DueDate, bool Completed,
+        DateTime LastUpdatedAt, long LastEventNumber);
+
 }

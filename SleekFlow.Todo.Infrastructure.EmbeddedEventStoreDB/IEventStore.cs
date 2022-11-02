@@ -6,6 +6,6 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 public interface IEventStore
 { 
     IEventStoreConnection Connection { get; }
-    Task AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events);
+    Task<long> AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events);
     Task<IEnumerable<ResolvedEvent>> ReadAllAsync(string streamName);
 }

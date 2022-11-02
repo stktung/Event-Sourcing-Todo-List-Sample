@@ -4,17 +4,15 @@ using EventStore.Core;
 using Newtonsoft.Json;
 using System.Text;
 using SleekFlow.Todo.Domain;
-using SleekFlow.Todo.Domain.Aggregate;
 
 namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
 {
     public class EmbeddedEventStoreDb : IEventStore
     {
-
         private const int EventStoreReadStreamMaxCount = 4096;
         private static readonly TimeSpan TimeToStop = TimeSpan.FromSeconds(5);
 
-        private ClusterVNode _node;
+        private readonly ClusterVNode _node;
 
         public IEventStoreConnection Connection { get; }
         
@@ -33,7 +31,7 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
             Connection.ConnectAsync().Wait();
         }
 
-        public async Task AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events)
+        public async Task<long> AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events)
         {
             using var transaction =
                 await Connection.StartTransactionAsync(streamName, expectedRevision);
@@ -54,7 +52,9 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
                 await transaction.WriteAsync(eventPayload);
             }
 
-            await transaction.CommitAsync();
+            var result = await transaction.CommitAsync();
+
+            return result.NextExpectedVersion;
         }
 
         public async Task<IEnumerable<ResolvedEvent>?> ReadAllAsync(string streamName)

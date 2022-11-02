@@ -12,13 +12,13 @@ namespace SleekFlow.Todo.Domain
             _repository = repository;
         }
 
-        public async Task<Guid> CreateTodoAsync()
+        public async Task<(Guid Id, long LastEventNumber)> CreateTodoAsync()
         {
             var todo = TodoItemAggregate.Create();
 
-            await _repository.Save(todo);
+            var latestEventNumber = await _repository.Save(todo);
 
-            return todo.Id;
+            return (todo.Id, latestEventNumber);
         }
 
         public async Task<TodoItemProjection?> GetAsync(Guid id)
