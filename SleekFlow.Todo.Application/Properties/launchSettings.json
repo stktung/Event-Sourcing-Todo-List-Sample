@@ -22,6 +22,10 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "EVENTSTORE_USERNAME": "admin",
+        "EVENTSTORE_PASSWORD": "changeit"
+      },
       "publishAllPorts": true,
       "useSSL": true
     }

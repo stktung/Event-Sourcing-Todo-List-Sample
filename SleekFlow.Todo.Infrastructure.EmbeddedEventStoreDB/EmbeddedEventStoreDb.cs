@@ -3,6 +3,7 @@ using EventStore.ClientAPI.Embedded;
 using EventStore.Core;
 using Newtonsoft.Json;
 using System.Text;
+using EventStore.Common.Options;
 using SleekFlow.Todo.Domain;
 
 namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
@@ -21,6 +22,8 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
             var nodeBuilder = EmbeddedVNodeBuilder
                 .AsSingleNode()
                 .OnDefaultEndpoints()
+                .RunProjections(ProjectionType.All)
+                .StartStandardProjections()
                 .RunInMemory();
 
             _node = nodeBuilder.Build();
