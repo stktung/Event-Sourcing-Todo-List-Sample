@@ -99,7 +99,7 @@ public class EventSubscriptionBackgroundService : BackgroundService
                 return;
             }
 
-            var @event = GetEvent(resolvedEvent);
+            var @event = EventMapper.MapToDomainEvent(resolvedEvent);
 
             var result = _subscriptionHandler(@event);
             if (!result.IsSuccess)
@@ -191,10 +191,4 @@ public class EventSubscriptionBackgroundService : BackgroundService
 
         _logger.LogInformation($"Subscription connected for {_logPrefix}.");
     }
-
-    public IEvent GetEvent(EventStore.ClientAPI.ResolvedEvent resolvedEvent)
-    {
-        return new TodoCreatedEvent();
-    }
-    
 }

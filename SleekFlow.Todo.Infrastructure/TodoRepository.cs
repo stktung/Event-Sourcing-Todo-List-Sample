@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using SleekFlow.Todo.Domain;
+﻿using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Domain.Aggregate;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
-using System.Text;
-using EventStore.ClientAPI;
 using SleekFlow.Todo.Domain.Projection;
 
 namespace SleekFlow.Todo.Infrastructure
@@ -25,27 +22,11 @@ namespace SleekFlow.Todo.Infrastructure
 
         public async Task<TodoItemProjection?> GetAsync(Guid id)
         {
-            var domainEvents = new List<IEvent>();
             var events = await _eventStore.ReadAllAsync(BuildStreamName(id));
 
             if (events == null) return null;
 
-            foreach (var esEvent in events)
-            {
-                switch (esEvent.Event.EventType)
-                {
-                    case nameof(TodoCreatedEvent):
-                        var e =
-                            JsonConvert.DeserializeObject<TodoCreatedEvent>(
-                                Encoding.UTF8.GetString(esEvent.Event.Data));
-
-                        e.EventNumber = esEvent.Event.EventNumber;
-                        e.RaisedAt = DateTimeOffset.FromUnixTimeMilliseconds(esEvent.Event.CreatedEpoch).UtcDateTime;
-
-                        domainEvents.Add(e);
-                        break;
-                }
-            }
+            var domainEvents = events.Select(esEvent => EventMapper.MapToDomainEvent(esEvent)).ToList();
 
             return TodoItemProjection.Load(domainEvents);
         }
