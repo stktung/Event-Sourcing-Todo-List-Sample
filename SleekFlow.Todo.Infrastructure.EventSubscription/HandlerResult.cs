@@ -1,6 +1,4 @@
-﻿using EventStore.Core.Data;
-
-namespace SleekFlow.Todo.Application.EventSubscription;
+﻿namespace SleekFlow.Todo.Infrastructure.EventSubscription;
 
 public class HandlerResult
 {

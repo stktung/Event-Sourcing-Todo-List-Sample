@@ -1,8 +1,8 @@
 using SleekFlow.Todo.Application.EventHandler;
-using SleekFlow.Todo.Application.EventSubscription;
 using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+using SleekFlow.Todo.Infrastructure.EventSubscription;
 using IEventStore = SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.IEventStore;
 
 var builder = WebApplication.CreateBuilder(args);

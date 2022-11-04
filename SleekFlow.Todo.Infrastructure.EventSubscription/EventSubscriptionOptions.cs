@@ -1,7 +1,4 @@
-using EventStore.Client;
-using SleekFlow.Todo.Domain;
-
-namespace SleekFlow.Todo.Application.EventSubscription;
+namespace SleekFlow.Todo.Infrastructure.EventSubscription;
 
 public class EventSubscriptionOptions
 {

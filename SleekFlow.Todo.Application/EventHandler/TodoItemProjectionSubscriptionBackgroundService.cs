@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using SleekFlow.Todo.Application.EventSubscription;
 using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+using SleekFlow.Todo.Infrastructure.EventSubscription;
 
 namespace SleekFlow.Todo.Application.EventHandler;
 

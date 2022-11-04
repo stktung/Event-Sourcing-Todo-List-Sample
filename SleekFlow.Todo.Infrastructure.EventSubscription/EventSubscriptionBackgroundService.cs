@@ -1,12 +1,13 @@
 using EventStore.Client;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 using EventStorePersistentSubscriptionBase = EventStore.ClientAPI.EventStorePersistentSubscriptionBase;
 using UserCredentials = EventStore.ClientAPI.SystemData.UserCredentials;
 
-namespace SleekFlow.Todo.Application.EventSubscription;
-
+namespace SleekFlow.Todo.Infrastructure.EventSubscription;
 
 public class EventSubscriptionBackgroundService : BackgroundService
 {
