@@ -21,18 +21,13 @@ builder.Services.AddSingleton<ITodoItemProjectionEventHandler, TodoItemProjectio
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddTecEventSubscription<TodoItemProjectionSubscriptionBackgroundService>(opts =>
-    {
-        opts.EventStoreConfigs = new EventStoreConfigs()
-        {
-            ApplicationName = "SleekFlowTodo",
-            Username = builder.Configuration["EVENTSTORE_USERNAME"],
-            Password = builder.Configuration["EVENTSTORE_PASSWORD"]
-        };
-
-        opts.SubscribeToStream = new CategoryStream("TodoItem");
-        opts.GroupName = "Group1";
-    });
+builder.Services.AddEventSubscription<TodoItemProjectionSubscriptionBackgroundService>(opts =>
+{
+    opts.ApplicationName = "SleekFlowTodo";
+    opts.Username = builder.Configuration["EVENTSTORE_USERNAME"];
+    opts.Password = builder.Configuration["EVENTSTORE_PASSWORD"];
+    opts.SubscribeToStream = "$ce-TodoItem";
+});
 
 var app = builder.Build();
 

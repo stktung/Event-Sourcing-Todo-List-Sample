@@ -41,7 +41,6 @@ public class EventSubscriptionBackgroundService : BackgroundService
         _streamName = subscriptionOptions.StreamName;
         _logPrefix = $"[Stream: {_streamName}, Group: {_groupName}]";
         _retryReconnectDelay = subscriptionOptions.RetryReconnectDelay;
-        _subscriptionHandler = subscriptionOptions.SubscriptionHandler;
         _userCredentials = new UserCredentials(subscriptionOptions.UserName, subscriptionOptions.Password);
         _retryDelay = subscriptionOptions.RetryDelay;
         _maxRetryCount = subscriptionOptions.Settings.MaxRetryCount;

@@ -10,7 +10,7 @@ public class TodoItemProjectionEventHandler : ITodoItemProjectionEventHandler
     public HandlerResult HandleEvent(IEvent evt)
     {
         Console.WriteLine("Hi Dare");
-        return new HandlerResult();
+        return new HandlerResult() { Error = Errors.RetryEvent<TodoCreatedEvent>("Testing") };
     }
 }
 
