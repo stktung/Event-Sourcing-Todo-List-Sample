@@ -61,6 +61,117 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create a todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo/create",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo/create",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo/create",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Todo (4 in total)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
