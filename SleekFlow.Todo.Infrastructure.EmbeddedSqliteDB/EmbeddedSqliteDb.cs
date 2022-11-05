@@ -1,5 +1,6 @@
-﻿using Dapper;
-using Microsoft.Data.Sqlite;
+﻿
+using System.Data.SQLite;
+using Dapper;
 
 namespace SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB
 {
@@ -16,12 +17,13 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB
     LastEventNumber BIGINT NOT NULL
 )";
 
-        public SqliteConnection Connection { get; }
+        public SQLiteConnection Connection { get; }
 
         public EmbeddedSqliteDb()
         {
-            Connection = new SqliteConnection("Data Source=:memory:");
+            Connection = new SQLiteConnection("Data Source=:memory:");
             Connection.Open();
+
 
             CreateDefaultTables();
 

@@ -40,7 +40,7 @@ public class TodoProjectionRepository : ITodoProjectionRepository
         await _db.Connection.ExecuteAsync(InsertTableTodoProjection,
             new
             {
-                todo.Id,
+                Id = todo.Id.ToString(),
                 todo.Name,
                 todo.Description,
                 todo.DueDate,
@@ -50,11 +50,11 @@ public class TodoProjectionRepository : ITodoProjectionRepository
             });
     }
 
-    public async Task<IEnumerable<TodoProjection>?> GetAll()
+    public async Task<IEnumerable<TodoProjection>?> GetAllAsync()
     {
         var todos = await _db.Connection.QueryAsync($"SELECT * FROM TodoProjections");
 
-        if (todos == null) return null;
+        if (todos == null || !todos.Any()) return null;
 
         var list = new List<TodoProjection>();
         foreach (var todo in todos)

@@ -1,8 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.SQLite;
 
 namespace SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB;
 
 public interface ISqlDb
 {
-    SqliteConnection Connection { get; }
+    SQLiteConnection Connection { get; }
 }

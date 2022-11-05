@@ -20,7 +20,7 @@ public class TodoProjectionRepositoryTests
         await projectionRepo.Save(todo1.Id);
         await projectionRepo.Save(todo2.Id);
 
-        var todoProjections = await projectionRepo.GetAll();
+        var todoProjections = await projectionRepo.GetAllAsync();
 
         Assert.That(todoProjections.ToList()[0].Id, Is.EqualTo(todo1.Id));
         Assert.That(todoProjections.ToList()[1].Id, Is.EqualTo(todo2.Id));

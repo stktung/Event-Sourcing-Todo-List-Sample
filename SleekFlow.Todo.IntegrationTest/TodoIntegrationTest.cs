@@ -68,5 +68,90 @@ namespace SleekFlow.Todo.IntegrationTest
             Assert.That(httpResponseMessage4.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
+        [Test]
+        public async Task TodoController_Create_Few_Todo_And_Call_GetAll_Returns_The_Todos()
+        {
+            var createResponse1 =
+                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
+                    .Content.ReadAsStringAsync());
+
+            var createResponse2 =
+                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
+                    .Content.ReadAsStringAsync());
+
+            var createResponse3 =
+                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
+                    .Content.ReadAsStringAsync());
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            var getResponse = await _client.GetAsync($"/Todo");
+            
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            
+            var getResponseBody =
+                await getResponse.Content.ReadAsStringAsync();
+            var todos =
+                JsonConvert.DeserializeObject<IEnumerable<GetTodoResponse>>(getResponseBody);
+
+            var todo1 = todos.First(todo => todo.Id == createResponse1.Id);
+            var todo2 = todos.First(todo => todo.Id == createResponse2.Id);
+            var todo3 = todos.First(todo => todo.Id == createResponse3.Id);
+
+            Assert.That(todos.Count(), Is.EqualTo(3));
+
+            Assert.That(todo1.Id, Is.EqualTo(createResponse1.Id));
+            Assert.That(todo1.Name, Is.Null);
+            Assert.That(todo1.Description, Is.Null);
+            Assert.That(todo1.DueDate, Is.Null);
+            Assert.That(todo1.Completed, Is.False);
+            Assert.That(todo1.LastEventNumber, Is.Zero);
+
+            Assert.That(todo2.Id, Is.EqualTo(createResponse2.Id));
+            Assert.That(todo2.Name, Is.Null);
+            Assert.That(todo2.Description, Is.Null);
+            Assert.That(todo2.DueDate, Is.Null);
+            Assert.That(todo2.Completed, Is.False);
+            Assert.That(todo2.LastEventNumber, Is.Zero);
+
+            Assert.That(todo3.Id, Is.EqualTo(createResponse3.Id));
+            Assert.That(todo3.Name, Is.Null);
+            Assert.That(todo3.Description, Is.Null);
+            Assert.That(todo3.DueDate, Is.Null);
+            Assert.That(todo3.Completed, Is.False);
+            Assert.That(todo3.LastEventNumber, Is.Zero);
+        }
+
+        [Test]
+        public async Task TodoController_Create_Many_Todo_And_Call_GetAll_Returns_The_Todos()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
+                    .Content.ReadAsStringAsync());
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            var getResponse = await _client.GetAsync($"/Todo");
+
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+            var getResponseBody =
+                await getResponse.Content.ReadAsStringAsync();
+            var todos =
+                JsonConvert.DeserializeObject<IEnumerable<GetTodoResponse>>(getResponseBody);
+
+            Assert.That(todos.Count(), Is.EqualTo(100));
+        }
+
+        [Test]
+        public async Task TodoController_GetAll_Of_Nothing_Returns_404()
+        {
+            var getResponse = await _client.GetAsync($"/Todo");
+
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
+
     }
 }

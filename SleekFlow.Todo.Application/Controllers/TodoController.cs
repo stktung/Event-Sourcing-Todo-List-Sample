@@ -40,8 +40,9 @@ namespace SleekFlow.Todo.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var todos = await _projectionRepository.GetAll();
-            if (todos == null) return NotFound();
+            var todos = await _projectionRepository.GetAllAsync();
+
+            if (todos == null || !todos.Any()) return NotFound();
 
             return Ok(todos.Select(todo => _mapper.Map<GetTodoResponse>(todo)));
         }
