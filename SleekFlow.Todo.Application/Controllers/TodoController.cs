@@ -9,11 +9,13 @@ namespace SleekFlow.Todo.Application.Controllers
     public class TodoController : ControllerBase
     {
         private readonly ITodoService _service;
+        private readonly ITodoProjectionRepository _projectionRepository;
         private readonly IMapper _mapper;
 
-        public TodoController(ITodoService service, IMapper mapper)
+        public TodoController(ITodoService service, ITodoProjectionRepository projectionRepository, IMapper mapper)
         {
             _service = service;
+            _projectionRepository = projectionRepository;
             _mapper = mapper;
         }
         
@@ -29,11 +31,21 @@ namespace SleekFlow.Todo.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromRoute]Guid id)
         {
-            var todo = await _service.GetAsync(id);
+            var todo = await _projectionRepository.GetFromEventStoreAsync(id);
             if (todo == null) return NotFound();
 
             return Ok(_mapper.Map<GetTodoResponse>(todo));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var todos = await _projectionRepository.GetAll();
+            if (todos == null) return NotFound();
+
+            return Ok(todos.Select(todo => _mapper.Map<GetTodoResponse>(todo)));
+        }
+
     }
 
     public record CreateTodoResponse(Guid Id, long LastEventNumber);

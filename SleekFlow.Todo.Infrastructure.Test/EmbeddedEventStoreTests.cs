@@ -3,7 +3,8 @@ using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using Newtonsoft.Json;
 using SleekFlow.Todo.Domain;
-using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+using SleekFlow.Todo.Domain.Common;
+using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
 
 namespace SleekFlow.Todo.Infrastructure.Test
 {
@@ -17,7 +18,7 @@ namespace SleekFlow.Todo.Infrastructure.Test
         [Test]
         public async Task Embedded_EventStore_Connect_Append_Read_Simple_Test()
         {
-            var db = new EmbeddedEventStoreDb();
+            var db = new EmbeddedEventStoreDb.EmbeddedEventStoreDb();
             
             var expected = "{\"Foo\":\"Bar\"}";
 
@@ -41,7 +42,7 @@ namespace SleekFlow.Todo.Infrastructure.Test
         [Test]
         public async Task Embedded_EventStore_Subscription1234123412341234()
         {
-            var db = new EmbeddedEventStoreDb();
+            var db = new EmbeddedEventStoreDb.EmbeddedEventStoreDb();
 
             var expected = "{\"Foo\":\"Bar\"}";
 
@@ -85,7 +86,7 @@ namespace SleekFlow.Todo.Infrastructure.Test
         [Test]
         public async Task EmbeddedEventStoreDb_Simple_Append_Event_And_ReadAll_Returns_Event()
         {
-            var db = new EmbeddedEventStoreDb();
+            var db = new EmbeddedEventStoreDb.EmbeddedEventStoreDb();
 
             var expected = new TestEvent() { TestMessage = "TestMessageHere!"};
             await db.AppendAsync("test", -1, new[] { expected });

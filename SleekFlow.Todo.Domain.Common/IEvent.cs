@@ -1,4 +1,4 @@
-﻿namespace SleekFlow.Todo.Domain;
+﻿namespace SleekFlow.Todo.Domain.Common;
 
 public interface IEvent
 {

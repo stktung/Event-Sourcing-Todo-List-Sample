@@ -1,9 +1,10 @@
 using SleekFlow.Todo.Application.EventHandler;
 using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure;
-using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
+using SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB;
 using SleekFlow.Todo.Infrastructure.EventSubscription;
-using IEventStore = SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.IEventStore;
+using IEventStore = SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb.IEventStore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +17,19 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+builder.Services.AddSingleton<ITodoProjectionRepository, TodoProjectionRepository>();
+builder.Services.AddSingleton<ITodoProjectionEventHandler, TodoProjectionEventHandler>();
 builder.Services.AddSingleton<IEventStore, EmbeddedEventStoreDb>();
-builder.Services.AddSingleton<ITodoItemProjectionEventHandler, TodoItemProjectionEventHandler>();
+builder.Services.AddSingleton<ISqlDb, EmbeddedSqliteDb>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddEventSubscription<TodoItemProjectionSubscriptionBackgroundService>(opts =>
+builder.Services.AddEventSubscription<TodoProjectionSubscriptionBackgroundService>(opts =>
 {
     opts.ApplicationName = "SleekFlowTodo";
     opts.Username = builder.Configuration["EVENTSTORE_USERNAME"];
     opts.Password = builder.Configuration["EVENTSTORE_PASSWORD"];
-    opts.SubscribeToStream = "$ce-TodoItem";
+    opts.SubscribeToStream = "$ce-Todo";
 });
 
 var app = builder.Build();

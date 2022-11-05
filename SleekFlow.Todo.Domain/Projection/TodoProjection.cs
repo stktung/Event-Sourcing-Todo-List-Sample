@@ -1,6 +1,8 @@
-﻿namespace SleekFlow.Todo.Domain.Projection
+﻿using SleekFlow.Todo.Domain.Common;
+
+namespace SleekFlow.Todo.Domain.Projection
 {
-    public class TodoItemProjection
+    public class TodoProjection
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
@@ -31,9 +33,9 @@
             LastEventNumber = e.EventNumber;
         }
 
-        public static TodoItemProjection Load(IEnumerable<IEvent> events)
+        public static TodoProjection Load(IEnumerable<IEvent> events)
         {
-            var todo = new TodoItemProjection();
+            var todo = new TodoProjection();
 
             foreach (var e in events)
             {

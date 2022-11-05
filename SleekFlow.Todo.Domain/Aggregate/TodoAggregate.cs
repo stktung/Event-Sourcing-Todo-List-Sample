@@ -1,14 +1,16 @@
-﻿namespace SleekFlow.Todo.Domain.Aggregate
+﻿using SleekFlow.Todo.Domain.Common;
+
+namespace SleekFlow.Todo.Domain.Aggregate
 {
-    public class TodoItemAggregate : EventSourcedAggregate
+    public class TodoAggregate : EventSourcedAggregate
     {
-        private TodoItemAggregate() : base("Todo")
+        private TodoAggregate() : base("Todo")
         {
         }
 
-        public static TodoItemAggregate Create()
+        public static TodoAggregate Create()
         {
-            var todo = new TodoItemAggregate
+            var todo = new TodoAggregate
             {
                 Id = Guid.NewGuid()
             };
@@ -33,9 +35,9 @@
             Id = e.Id;
         }
 
-        public static TodoItemAggregate Load(IEnumerable<IEvent> events)
+        public static TodoAggregate Load(IEnumerable<IEvent> events)
         {
-            var todo = new TodoItemAggregate();
+            var todo = new TodoAggregate();
             
             foreach (var e in events)
             {

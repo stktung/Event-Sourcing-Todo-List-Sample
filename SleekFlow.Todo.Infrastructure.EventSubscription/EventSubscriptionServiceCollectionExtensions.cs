@@ -29,7 +29,7 @@ namespace SleekFlow.Todo.Infrastructure.EventSubscription
                         OperationOptions = operationOptions
                     });
 
-                    opts.Settings = EventStore.ClientAPI.PersistentSubscriptionSettings.Create().Build();
+                    opts.Settings = EventStore.ClientAPI.PersistentSubscriptionSettings.Create().ResolveLinkTos().Build();
                     
                     opts.StreamName = options.SubscribeToStream;
                     opts.GroupName = "Group1";

@@ -1,13 +1,12 @@
 ﻿using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Domain.Aggregate;
-using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
-using SleekFlow.Todo.Domain.Projection;
+using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
 
 namespace SleekFlow.Todo.Infrastructure
 {
     public class TodoRepository : ITodoRepository
     {
-        private const string StreamPrefix = "TodoItem-";
+        private const string StreamPrefix = "Todo-";
         private readonly IEventStore _eventStore;
 
         public TodoRepository(IEventStore eventStore)
@@ -15,22 +14,11 @@ namespace SleekFlow.Todo.Infrastructure
             _eventStore = eventStore;
         }
 
-        public async Task<long> Save(TodoItemAggregate todo)
+        public async Task<long> Save(TodoAggregate todo)
         {
             return await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.PreviousRevision, todo.NewEvents);
         }
 
-        public async Task<TodoItemProjection?> GetAsync(Guid id)
-        {
-            var events = await _eventStore.ReadAllAsync(BuildStreamName(id));
-
-            if (events == null) return null;
-
-            var domainEvents = events.Select(esEvent => EventMapper.MapToDomainEvent(esEvent)).ToList();
-
-            return TodoItemProjection.Load(domainEvents);
-        }
-
-        public string BuildStreamName(Guid id) => $"{StreamPrefix}-{id}";
+        public static string BuildStreamName(Guid id) => $"{StreamPrefix}-{id}";
     }
 }

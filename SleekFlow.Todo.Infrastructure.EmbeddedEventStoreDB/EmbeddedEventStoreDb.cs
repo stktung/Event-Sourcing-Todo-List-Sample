@@ -5,10 +5,11 @@ using Newtonsoft.Json;
 using System.Text;
 using EventStore.Common.Options;
 using SleekFlow.Todo.Domain;
+using SleekFlow.Todo.Domain.Common;
 
-namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
+namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb
 {
-    public class EmbeddedEventStoreDb : IEventStore
+    public class EmbeddedEventStoreDb : IEventStore, IDisposable
     {
         private const int EventStoreReadStreamMaxCount = 4096;
         private static readonly TimeSpan TimeToStop = TimeSpan.FromSeconds(5);
@@ -34,6 +35,13 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB
             Connection.ConnectAsync().Wait();
         }
 
+        /// <summary>
+        /// Appends one or more events into stream. If stream is not on the expected revision, exception will be thrown
+        /// </summary>
+        /// <param name="streamName">Name of stream to append into the event store</param>
+        /// <param name="expectedRevision">Append expects the stream to be on the expected revision. Otherwise exception will be thrown</param>
+        /// <param name="events">Collection of domain events to insert into the event store</param>
+        /// <returns>Next Event Number</returns>
         public async Task<long> AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events)
         {
             using var transaction =

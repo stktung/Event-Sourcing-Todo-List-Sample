@@ -1,4 +1,6 @@
-﻿namespace SleekFlow.Todo.Domain;
+﻿using SleekFlow.Todo.Domain.Common;
+
+namespace SleekFlow.Todo.Domain;
 
 public class TodoCreatedEvent : IEvent
 {

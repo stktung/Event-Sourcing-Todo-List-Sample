@@ -12,6 +12,8 @@ namespace SleekFlow.Todo.IntegrationTest
         [SetUp]
         public void Setup()
         {
+            Environment.SetEnvironmentVariable("EVENTSTORE_USERNAME", "admin");
+            Environment.SetEnvironmentVariable("EVENTSTORE_PASSWORD", "changeit");
             var webAppFactory = new WebApplicationFactory<Program>();
             _client = webAppFactory.CreateDefaultClient();
         }

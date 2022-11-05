@@ -28,4 +28,8 @@ public static class Errors
 
     public static Error RetryEvent<T>(string reason)
         => new Error(nameof(RetryEvent), $"Event '{typeof(T).Name}' is to be retried. Reason: '{reason}'.");
+
+    public static Error ParkEvent<T>(string reason)
+        => new Error(nameof(ParkEvent), $"Event '{typeof(T).Name}' should be parked. Reason: '{reason}'.");
+
 }

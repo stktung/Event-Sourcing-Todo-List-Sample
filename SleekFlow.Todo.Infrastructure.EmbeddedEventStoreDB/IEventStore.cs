@@ -1,7 +1,8 @@
 ﻿using EventStore.ClientAPI;
 using SleekFlow.Todo.Domain;
+using SleekFlow.Todo.Domain.Common;
 
-namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
 
 public interface IEventStore
 { 

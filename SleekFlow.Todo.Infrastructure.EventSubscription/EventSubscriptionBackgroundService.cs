@@ -2,8 +2,8 @@ using EventStore.Client;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SleekFlow.Todo.Domain;
-using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
+using SleekFlow.Todo.Domain.Common;
+using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
 using EventStorePersistentSubscriptionBase = EventStore.ClientAPI.EventStorePersistentSubscriptionBase;
 using UserCredentials = EventStore.ClientAPI.SystemData.UserCredentials;
 
@@ -24,7 +24,7 @@ public class EventSubscriptionBackgroundService : BackgroundService
     private readonly int _maxRetryCount;
     private readonly UserCredentials _userCredentials;
     
-    protected Func<IEvent, HandlerResult> _subscriptionHandler;
+    protected Func<IEvent, HandlerResult>? SubscriptionHandler;
 
     public EventSubscriptionBackgroundService(
         ILogger<EventSubscriptionBackgroundService> logger,
@@ -101,7 +101,7 @@ public class EventSubscriptionBackgroundService : BackgroundService
 
             var @event = EventMapper.MapToDomainEvent(resolvedEvent);
 
-            var result = _subscriptionHandler(@event);
+            var result = SubscriptionHandler(@event);
             if (!result.IsSuccess)
             {
                 switch (result.Error!.Code)
@@ -115,7 +115,7 @@ public class EventSubscriptionBackgroundService : BackgroundService
                         Thread.Sleep(_retryDelay);
                         subscription.Fail(resolvedEvent, EventStore.ClientAPI.PersistentSubscriptionNakEventAction.Retry, result.Error!.Message);
                         break;
-                    default:
+                    case nameof(Errors.ParkEvent):
                         _logger.LogError($"Handle {{@ResolvedEvent}} by XXX with {{@Result}}.", resolvedEvent, result);
                         subscription.Fail(resolvedEvent, EventStore.ClientAPI.PersistentSubscriptionNakEventAction.Park, result.Error!.Message);
                         break;
