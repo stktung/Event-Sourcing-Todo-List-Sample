@@ -24,7 +24,7 @@ public class EventSubscriptionBackgroundService : BackgroundService
     private readonly int _maxRetryCount;
     private readonly UserCredentials _userCredentials;
     
-    protected Func<IEvent, HandlerResult>? SubscriptionHandler;
+    protected Func<DomainEvent, HandlerResult>? SubscriptionHandler;
 
     public EventSubscriptionBackgroundService(
         ILogger<EventSubscriptionBackgroundService> logger,

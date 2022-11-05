@@ -42,7 +42,7 @@ namespace SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb
         /// <param name="expectedRevision">Append expects the stream to be on the expected revision. Otherwise exception will be thrown</param>
         /// <param name="events">Collection of domain events to insert into the event store</param>
         /// <returns>Next Event Number</returns>
-        public async Task<long> AppendAsync(string streamName, int expectedRevision, IEnumerable<IEvent> events)
+        public async Task<long> AppendAsync(string streamName, int expectedRevision, IEnumerable<DomainEvent> events)
         {
             using var transaction =
                 await Connection.StartTransactionAsync(streamName, expectedRevision);

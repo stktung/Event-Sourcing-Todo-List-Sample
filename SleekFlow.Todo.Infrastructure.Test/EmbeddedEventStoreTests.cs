@@ -96,9 +96,10 @@ namespace SleekFlow.Todo.Infrastructure.Test
             Assert.That(actual.TestMessage, Is.EqualTo(expected.TestMessage));
         }
 
-        public class TestEvent : IEvent
+        public class TestEvent : DomainEvent
         {
             public string TestMessage { get; set; }
+            public Guid Id { get; set; }
             public long EventNumber { get; set; }
             public string RaisedBy { get; set; }
             public DateTime RaisedAt { get; set; }
