@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EventStore.Client.Grpc.PersistentSubscriptions" Version="20.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.csproj" />
+    <ProjectReference Include="..\SleekFlow.Todo.Infrastructure\SleekFlow.Todo.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

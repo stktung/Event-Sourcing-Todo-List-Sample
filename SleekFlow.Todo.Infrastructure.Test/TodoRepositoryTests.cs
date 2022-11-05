@@ -1,5 +1,4 @@
 using SleekFlow.Todo.Domain.Aggregate;
-using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB;
 
 namespace SleekFlow.Todo.Infrastructure.Test;
 
@@ -8,14 +7,16 @@ public class TodoRepositoryTests
     [Test]
     public async Task TodoRepository_Simple_Save_And_Get_Returns_Todo()
     {
-        var db = new EmbeddedEventStoreDb();
-        var repo = new TodoRepository(db);
-        var todo = TodoItemAggregate.Create();
+        var store = new EmbeddedEventStoreDb.EmbeddedEventStoreDb();
+        var db = new EmbeddedSqliteDB.EmbeddedSqliteDb();
+        var todoRepo = new TodoRepository(store);
+        var projectionRepo = new TodoProjectionRepository(store, db);
+        var todo = TodoAggregate.Create();
 
-        await repo.Save(todo);
-        var todoItemProjection = await repo.GetAsync(todo.Id);
+        await todoRepo.Save(todo);
+        var todoProjection = await projectionRepo.GetFromEventStoreAsync(todo.Id);
 
-        Assert.That(todoItemProjection.Id, Is.EqualTo(todo.Id));
+        Assert.That(todoProjection.Id, Is.EqualTo(todo.Id));
     }
 
 }

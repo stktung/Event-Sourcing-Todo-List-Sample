@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace SleekFlow.Todo.Domain.Aggregate;
+namespace SleekFlow.Todo.Domain.Common;
 
 public abstract class EventSourcedAggregate
 {
