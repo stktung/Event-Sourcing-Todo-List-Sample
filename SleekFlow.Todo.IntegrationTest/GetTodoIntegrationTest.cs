@@ -43,4 +43,22 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
         Assert.That(getResp[1].Completed, Is.True);
         Assert.That(getResp[1].Id, Is.EqualTo(resp3.Id));
     }
+
+    [Test]
+    public async Task TodoController_GetAll_With_DueDate_Range_Returns_Only_Todos_Within_The_Range()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.UpdateTodoDueDateAsync(resp1.Id, resp1.LastEventNumber, DateTime.UtcNow.AddDays(10));
+        var resp5 = await _client.UpdateTodoDueDateAsync(resp2.Id, resp2.LastEventNumber, DateTime.UtcNow.AddDays(20));
+        var resp6 = await _client.UpdateTodoDueDateAsync(resp3.Id, resp3.LastEventNumber, DateTime.UtcNow.AddDays(30));
+
+        var getResp = (await _client.GetAllAsync(dueDateAfter: DateTime.UtcNow.AddDays(5),
+            dueDateBefore: DateTime.UtcNow.AddDays(25))).ToList();
+        
+        Assert.That(getResp.Count, Is.EqualTo(2));
+        Assert.That(getResp[0].Id, Is.EqualTo(resp1.Id));
+        Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+    }
 }

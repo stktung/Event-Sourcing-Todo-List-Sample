@@ -8,13 +8,23 @@ namespace SleekFlow.Todo.IntegrationTest;
 public static class HttpClientTestHelperExtensions
 {
 
-    public static async Task<IEnumerable<GetTodoResponse>> GetAllAsync(this HttpClient client, bool? isCompleted = null)
+    public static async Task<IEnumerable<GetTodoResponse>> GetAllAsync(this HttpClient client, bool? isCompleted = null, DateTime? dueDateBefore = null, DateTime? dueDateAfter = null)
     {
         var requestUri = $"/Todo?";
 
         if (isCompleted != null)
         {
-            requestUri += $"isCompleted={isCompleted}";
+            requestUri += $"&isCompleted={isCompleted}";
+        }
+
+        if (dueDateBefore != null)
+        {
+            requestUri += $"&dueDateIsBefore={dueDateBefore}";
+        }
+
+        if (dueDateAfter != null)
+        {
+            requestUri += $"&dueDateIsAfter={dueDateAfter}";
         }
 
         var getResp = await client.GetAsync(requestUri);

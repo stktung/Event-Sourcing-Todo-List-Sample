@@ -37,13 +37,24 @@ WHERE Id = @Id";
         return TodoProjection.Load(domainEvents);
     }
 
-    public async Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null)
+    public async Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null, DateTime? dueDateIsBefore = null,
+        DateTime? dueDateIsAfter = null)
     {
         var builder = new SqlBuilder();
 
         if (isCompleted != null)
         {
             builder.Where("Completed = @IsCompleted", new { IsCompleted = isCompleted });
+        }
+
+        if (dueDateIsBefore != null)
+        {
+            builder.Where("DueDate <= @DueDateIsBefore", new { DueDateIsBefore = DateTimeHelper.ConvertToUtc(dueDateIsBefore) });
+        }
+
+        if (dueDateIsAfter != null)
+        {
+            builder.Where("DueDate >= @DueDateIsAfter", new { DueDateIsAfter = DateTimeHelper.ConvertToUtc(dueDateIsAfter) });
         }
 
         var select = builder.AddTemplate($"SELECT * FROM TodoProjections /**where**/");

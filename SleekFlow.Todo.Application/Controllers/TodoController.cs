@@ -30,9 +30,9 @@ namespace SleekFlow.Todo.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted)
+        public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null, [FromQuery] DateTime? dueDateIsBefore = null, [FromQuery] DateTime? dueDateIsAfter = null)
         {
-            var todos = await _projectionRepository.GetAllAsync(isCompleted);
+            var todos = await _projectionRepository.GetAllAsync(isCompleted, dueDateIsBefore, dueDateIsAfter);
 
             if (todos == null || !todos.Any()) return NotFound();
 

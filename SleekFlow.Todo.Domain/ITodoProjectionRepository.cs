@@ -5,6 +5,8 @@ namespace SleekFlow.Todo.Domain;
 public interface ITodoProjectionRepository
 {
     Task<TodoProjection?> GetFromEventStoreAsync(Guid id);
-    Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null);
+
+    Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null, DateTime? dueDateIsBefore = null,
+        DateTime? dueDateIsAfter = null);
     Task Save(Guid id);
 }
