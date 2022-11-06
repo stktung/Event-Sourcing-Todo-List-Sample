@@ -23,6 +23,9 @@ namespace SleekFlow.Todo.Domain.Projection
                 case TodoNameTextInsertedEvent evt:
                     Apply(evt);
                     break;
+                case TodoNameTextDeletedEvent evt:
+                    Apply(evt);
+                    break;
             }
         }
 
@@ -53,7 +56,29 @@ namespace SleekFlow.Todo.Domain.Projection
             LastUpdatedAt = e.RaisedAt;
             LastEventNumber = e.EventNumber;
         }
+        private void Apply(TodoNameTextDeletedEvent e)
+        {
+            if (e.Position < 0)
+                throw new ProjectionException($"Position must be greater than or equals to 0. Position:'{e.Position}'");
+            if (string.IsNullOrEmpty(Name) && e.Position > 0)
+                throw new ProjectionException(
+                    $"Position not exceed length of name. Position: '{e.Position}' Name length: '0'");
+            if (string.IsNullOrEmpty(Name) && e.Position + e.Length > 0)
+                throw new ProjectionException(
+                    $"Can not delete text beyond the text. Position: '{e.Position}' Name length: '0' Length to Delete: '{e.Length}'");
+            if (!string.IsNullOrEmpty(Name) && e.Position > Name.Length)
+                throw new ProjectionException(
+                    $"Position not exceed length of name. Position: '{e.Position}' Name length: '{Name.Length}'");
+            if (!string.IsNullOrEmpty(Name) && e.Position + e.Length > Name.Length)
+                throw new ProjectionException(
+                    $"Can not delete text beyond the text. Position: '{e.Position}' Name length: '{Name.Length}' Length to Delete: '{e.Length}'");
 
+            if (Name == null) return;
+            
+            Name = Name.Remove(e.Position, e.Length);
+            LastUpdatedAt = e.RaisedAt;
+            LastEventNumber = e.EventNumber;
+        }
 
         public static TodoProjection Load(IEnumerable<Common.DomainEvent> events)
         {

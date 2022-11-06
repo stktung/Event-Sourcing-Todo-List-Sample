@@ -14,7 +14,8 @@
 					"script": {
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);\r",
-							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);\r",
+							"postman.setEnvironmentVariable(\"expectedVersion\", 0);"
 						],
 						"type": "text/javascript"
 					}
@@ -45,7 +46,8 @@
 					"script": {
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);\r",
-							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);\r",
+							"postman.setEnvironmentVariable(\"expectedVersion\", 0);"
 						],
 						"type": "text/javascript"
 					}
@@ -76,7 +78,8 @@
 					"script": {
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);\r",
-							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);\r",
+							"postman.setEnvironmentVariable(\"expectedVersion\", 0);"
 						],
 						"type": "text/javascript"
 					}
@@ -107,7 +110,8 @@
 					"script": {
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);\r",
-							"postman.setEnvironmentVariable(\"id\", jsonData.id);"
+							"postman.setEnvironmentVariable(\"id\", jsonData.id);\r",
+							"postman.setEnvironmentVariable(\"expectedVersion\", 0);"
 						],
 						"type": "text/javascript"
 					}
@@ -137,7 +141,11 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -148,7 +156,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"expectedVersion\": 0,\r\n    \"text\": \"Implement database layer\",\r\n    \"position\": 0\r\n}",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"text\": \"Implement database layer\",\r\n    \"position\": 0\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -178,7 +186,11 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -189,7 +201,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"expectedVersion\": 1,\r\n    \"text\": \" withhhh EventStoreDB\",\r\n    \"position\": 24\r\n}",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"text\": \" withhhh EventStoreDB\",\r\n    \"position\": 24\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -207,6 +219,51 @@
 						"{{id}}",
 						"name",
 						"inserttext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Todo Name Text Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"position\": 0,\r\n    \"length\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/name/deletetext",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"name",
+						"deletetext"
 					]
 				}
 			},
