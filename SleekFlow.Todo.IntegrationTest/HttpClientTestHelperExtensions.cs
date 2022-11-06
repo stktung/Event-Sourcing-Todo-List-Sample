@@ -2,11 +2,25 @@ using System.Text;
 using Newtonsoft.Json;
 using SleekFlow.Todo.Application.Controllers;
 using SleekFlow.Todo.Application.Middleware;
+using SleekFlow.Todo.Application.Model;
+using SleekFlow.Todo.Application.Model.Event;
 
 namespace SleekFlow.Todo.IntegrationTest;
 
 public static class HttpClientTestHelperExtensions
 {
+
+    public static async Task<IEnumerable<DomainEventWebDto>?> GetHistoryAsync(this HttpClient client, Guid id)
+    {
+        var getResp = await client.GetAsync($"/Todo/{id}/history");
+
+        var getResponseBody =
+            await getResp.Content.ReadAsStringAsync();
+
+        var todos = JsonConvert.DeserializeObject<IEnumerable<DomainEventWebDto>>(getResponseBody);
+        
+        return todos;
+    }
 
     public static async Task<IEnumerable<GetTodoResponse>> GetAllAsync(this HttpClient client, bool? isCompleted = null,
         DateTime? dueDateBefore = null, DateTime? dueDateAfter = null, TodoController.SortByField? sortByField = null,

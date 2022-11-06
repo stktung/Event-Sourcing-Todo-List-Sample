@@ -16,18 +16,13 @@ namespace SleekFlow.Todo.Infrastructure
             _eventStore = eventStore;
         }
 
-        public async Task<long> SaveAsync(TodoAggregate todo)
+        public async Task<IEnumerable<DomainEvent>?> GetEventsAsync(Guid id)
         {
-            try
-            {
-                return await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.LoadVersion, todo.NewEvents);
-            }
-            catch (WrongExpectedVersionException e)
-            {
-                throw new AggregateWrongExpectedVersionException(
-                    $"Revision of aggregate is mismatched with expected version. ExpectedVersion: {todo.LoadVersion}",
-                    e);
-            }
+            var events = await _eventStore.ReadAllAsync(BuildStreamName(id));
+
+            if (events == null) return null;
+
+            return events.Select(EventMapper.MapToDomainEvent).ToList();
         }
 
         public async Task<TodoAggregate?> LoadLatestAsync(Guid id, long? expectedVersion = null)
@@ -45,6 +40,20 @@ namespace SleekFlow.Todo.Infrastructure
                     $"Revision of loaded aggregate is mismatched with expected version. LoadVersion: '{todo.LoadVersion}' ExpectedVersion '{expectedVersion}'");
 
             return todo;
+        }
+
+        public async Task<long> SaveAsync(TodoAggregate todo)
+        {
+            try
+            {
+                return await _eventStore.AppendAsync(BuildStreamName(todo.Id), todo.LoadVersion, todo.NewEvents);
+            }
+            catch (WrongExpectedVersionException e)
+            {
+                throw new AggregateWrongExpectedVersionException(
+                    $"Revision of aggregate is mismatched with expected version. ExpectedVersion: {todo.LoadVersion}",
+                    e);
+            }
         }
 
         public static string BuildStreamName(Guid id) => $"{StreamPrefix}-{id}";

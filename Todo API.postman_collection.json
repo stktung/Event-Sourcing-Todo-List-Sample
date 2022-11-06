@@ -64,6 +64,32 @@
 			"response": []
 		},
 		{
+			"name": "Get Todo History",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo/:id/history",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						":id",
+						"history"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get All Todo",
 			"request": {
 				"method": "GET",

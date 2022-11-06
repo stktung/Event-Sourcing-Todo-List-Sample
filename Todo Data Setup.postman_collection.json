@@ -573,6 +573,32 @@
 			"response": []
 		},
 		{
+			"name": "Get History",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/Todo/:id/history",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						":id",
+						"history"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create a todo",
 			"event": [
 				{

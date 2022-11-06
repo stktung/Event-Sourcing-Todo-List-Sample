@@ -1,4 +1,5 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
+using SleekFlow.Todo.Domain.Common;
 
 namespace SleekFlow.Todo.Domain;
 
@@ -21,4 +22,5 @@ public interface ITodoService
     Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoIsCompletedAsync(long expectedVersion, Guid id,
         bool isCompleted);
 
+    Task<IEnumerable<DomainEvent>?> GetHistory(Guid id);
 }

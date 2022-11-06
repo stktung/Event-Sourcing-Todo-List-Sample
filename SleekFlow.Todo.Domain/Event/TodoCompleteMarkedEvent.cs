@@ -2,4 +2,7 @@
 
 public class TodoCompleteMarkedEvent : Common.DomainEvent
 {
+    public TodoCompleteMarkedEvent() : base(nameof(TodoCompleteMarkedEvent))
+    {
+    }
 }

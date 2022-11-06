@@ -1,4 +1,5 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
+using SleekFlow.Todo.Domain.Common;
 
 namespace SleekFlow.Todo.Domain
 {
@@ -9,6 +10,11 @@ namespace SleekFlow.Todo.Domain
         public TodoService(ITodoRepository repository)
         {
             _repository = repository;
+        }
+
+        public async Task<IEnumerable<DomainEvent>?> GetHistory(Guid id)
+        {
+            return await _repository.GetEventsAsync(id);
         }
 
         public async Task<(Guid Id, long LastEventNumber)> CreateTodoAsync()
@@ -103,6 +109,5 @@ namespace SleekFlow.Todo.Domain
 
             return (todo, lastEventNumber);
         }
-
     }
 }

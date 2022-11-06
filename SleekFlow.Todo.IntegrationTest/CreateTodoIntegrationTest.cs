@@ -1,6 +1,6 @@
 using System.Net;
 using Newtonsoft.Json;
-using SleekFlow.Todo.Application.Controllers;
+using SleekFlow.Todo.Application.Model;
 
 namespace SleekFlow.Todo.IntegrationTest;
 
