@@ -4,4 +4,8 @@ public class TodoDescriptionTextDeletedEvent : Common.DomainEvent
 {
     public int Position { get; set; }
     public int Length { get; set; }
+
+    public TodoDescriptionTextDeletedEvent() : base(nameof(TodoDescriptionTextDeletedEvent))
+    {
+    }
 }

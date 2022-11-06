@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SleekFlow.Todo.Application.Model;
+using SleekFlow.Todo.Application.Model.Event;
 using SleekFlow.Todo.Domain;
 
 namespace SleekFlow.Todo.Application.Controllers
@@ -28,6 +30,17 @@ namespace SleekFlow.Todo.Application.Controllers
 
             return Ok(_mapper.Map<GetTodoResponse>(todo));
         }
+
+        [Route("{id:guid}/history")]
+        [HttpGet]
+        public async Task<IActionResult> GetHistoryAsync([FromRoute] Guid id)
+        {
+            var events = await _service.GetHistory(id);
+            if (events == null) return NotFound();
+
+            return Ok(events.Select(e => _mapper.Map(e, e.GetType(), typeof(DomainEventWebDto))));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null,
@@ -128,19 +141,4 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
     }
-
-    public record GeneralPostTodoResponse(Guid Id, long LastEventNumber);
-
-    public record GetTodoResponse(Guid Id, string? Name, string? Description, DateTime? DueDate, bool Completed,
-        DateTime LastUpdatedAt, long LastEventNumber);
-
-    public record InsertTodoNameTextRequest(long ExpectedVersion, string Text, int Position);
-    public record DeleteTodoNameTextRequest(long ExpectedVersion, int Position, int length);
-
-    public record InsertTodoDescriptionTextRequest(long ExpectedVersion, string Text, int Position);
-
-    public record DeleteTodoDescriptionTextRequest(long ExpectedVersion, int Position, int length);
-
-    public record UpdateTodoDueDateRequest(long ExpectedVersion, DateTime? DueDate);
-    public record UpdateTodoIsCompletedRequest(long ExpectedVersion, bool IsCompleted);
 }

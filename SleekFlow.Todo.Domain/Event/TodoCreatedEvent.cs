@@ -2,4 +2,7 @@
 
 public class TodoCreatedEvent : Common.DomainEvent
 {
+    public TodoCreatedEvent() : base(nameof(TodoCreatedEvent))
+    {
+    }
 }
