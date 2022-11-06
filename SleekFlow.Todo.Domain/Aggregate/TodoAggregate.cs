@@ -7,6 +7,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
     public class TodoAggregate : EventSourcedAggregate
     {
         private bool _created;
+        private bool _completed;
         private long _nameLength;
         private long _descriptionLength;
 
@@ -30,7 +31,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
         
         public void InsertTextToName(string text, int position)
         {
-            if (!_created) throw new DomainException("Todo has not been created yet.");
+            if (!_created) throw new DomainException("Todo has not been created yet");
+            if (_completed) throw new DomainException("Todo is completed and can not be updated");
 
             if (position < 0)
                 throw new DomainException($"Position must be greater than 0. Position = '{position}'");
@@ -43,7 +45,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
 
         public void DeleteTextFromName(int position, int length)
         {
-            if (!_created) throw new DomainException("Todo has not been created yet.");
+            if (!_created) throw new DomainException("Todo has not been created yet");
+            if (_completed) throw new DomainException("Todo is completed and can not be updated");
 
             if (position < 0)
                 throw new DomainException($"Position must be greater than 0. Position = '{position}'");
@@ -59,7 +62,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
 
         public void InsertTextToDescription(string text, int position)
         {
-            if (!_created) throw new DomainException("Todo has not been created yet.");
+            if (!_created) throw new DomainException("Todo has not been created yet");
+            if (_completed) throw new DomainException("Todo is completed and can not be updated");
 
             if (position < 0)
                 throw new DomainException($"Position must be greater than 0. Position = '{position}'");
@@ -72,7 +76,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
 
         public void DeleteTextFromDescription(int position, int length)
         {
-            if (!_created) throw new DomainException("Todo has not been created yet.");
+            if (!_created) throw new DomainException("Todo has not been created yet");
+            if (_completed) throw new DomainException("Todo is completed and can not be updated");
 
             if (position < 0)
                 throw new DomainException($"Position must be greater than 0. Position = '{position}'");
@@ -88,7 +93,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
 
         public void UpdateDueDate(DateTime? dueDate)
         {
-            if (!_created) throw new DomainException("Todo has not been created yet.");
+            if (!_created) throw new DomainException("Todo has not been created yet");
+            if (_completed) throw new DomainException("Todo is completed and can not be updated");
 
             if (dueDate == null)
             {
@@ -101,6 +107,17 @@ namespace SleekFlow.Todo.Domain.Aggregate
 
                 Raise(new TodoDueDateUpdatedEvent { Id = Id, DueDate = dueDate });
             }
+        }
+        public void UpdateIsCompleted(bool isCompleted)
+        {
+            if (!_created) throw new DomainException("Todo has not been created yet");
+
+            _completed = isCompleted;
+
+            if (isCompleted) 
+                Raise(new TodoCompleteMarkedEvent { Id = Id, });
+            else
+                Raise(new TodoCompleteUnmarkedEvent { Id = Id, });
         }
 
         private void Apply(DomainEvent e) 
@@ -123,6 +140,12 @@ namespace SleekFlow.Todo.Domain.Aggregate
                     Apply(evt);
                     break;
                 case TodoDueDateUpdatedEvent evt:
+                    Apply(evt);
+                    break;
+                case TodoCompleteMarkedEvent evt:
+                    Apply(evt);
+                    break;
+                case TodoCompleteUnmarkedEvent evt:
                     Apply(evt);
                     break;
             }
@@ -158,6 +181,14 @@ namespace SleekFlow.Todo.Domain.Aggregate
         private void Apply(TodoDueDateUpdatedEvent e)
         {
             // no implementation required
+        }
+        private void Apply(TodoCompleteMarkedEvent e)
+        {
+            _completed = true;
+        }
+        private void Apply(TodoCompleteUnmarkedEvent e)
+        {
+            _completed = false;
         }
 
         public static TodoAggregate Load(IEnumerable<DomainEvent> events)

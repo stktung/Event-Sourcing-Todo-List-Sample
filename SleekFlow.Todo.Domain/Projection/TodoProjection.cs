@@ -35,6 +35,12 @@ namespace SleekFlow.Todo.Domain.Projection
                 case TodoDueDateUpdatedEvent evt:
                     Apply(evt);
                     break;
+                case TodoCompleteMarkedEvent evt:
+                    Apply(evt);
+                    break;
+                case TodoCompleteUnmarkedEvent evt:
+                    Apply(evt);
+                    break;
             }
         }
 
@@ -104,6 +110,7 @@ namespace SleekFlow.Todo.Domain.Projection
             LastUpdatedAt = e.RaisedAt;
             LastEventNumber = e.EventNumber;
         }
+
         private void Apply(TodoDescriptionTextDeletedEvent e)
         {
             if (e.Position < 0)
@@ -134,6 +141,22 @@ namespace SleekFlow.Todo.Domain.Projection
                 throw new ProjectionException($"Due date must be in UTC format");
 
             DueDate = e.DueDate;
+
+            LastUpdatedAt = e.RaisedAt;
+            LastEventNumber = e.EventNumber;
+        }
+
+        private void Apply(TodoCompleteMarkedEvent e)
+        {
+            Completed = true;
+
+            LastUpdatedAt = e.RaisedAt;
+            LastEventNumber = e.EventNumber;
+        }
+
+        private void Apply(TodoCompleteUnmarkedEvent e)
+        {
+            Completed = false;
 
             LastUpdatedAt = e.RaisedAt;
             LastEventNumber = e.EventNumber;

@@ -18,5 +18,7 @@ public interface ITodoService
         int position, int length);
     Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoDueDateAsync(long expectedVersion, Guid id,
         DateTime? dueDate);
+    Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoIsCompletedAsync(long expectedVersion, Guid id,
+        bool isCompleted);
 
 }
