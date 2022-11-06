@@ -20,7 +20,7 @@ public abstract class EventSourcedAggregate
         _newEvents.Add(e);
     }
 
-    public int PreviousRevision => _pastEvents.Count() - 1;
+    public long LoadVersion => _pastEvents.Any() ? _pastEvents.Max(e => e.EventNumber) : -1;
 
     public ReadOnlyCollection<DomainEvent> NewEvents => _newEvents.AsReadOnly();
 

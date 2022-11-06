@@ -1,7 +1,10 @@
 using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using SleekFlow.Todo.Application.Controllers;
+using SleekFlow.Todo.Application.Middleware;
+using SleekFlow.Todo.Domain.Common;
 
 namespace SleekFlow.Todo.IntegrationTest
 {
@@ -22,9 +25,7 @@ namespace SleekFlow.Todo.IntegrationTest
         public async Task TodoController_Simple_Create_Assert_Response_Has_Id_And_EventNumber()
         {
 
-            var createResponse =
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
-                    .Content.ReadAsStringAsync());
+            var createResponse = await CreateTodoAsync();
             
             Assert.That(createResponse.Id, Is.Not.EqualTo(default(Guid)));
             Assert.That(createResponse.LastEventNumber, Is.EqualTo(0));
@@ -35,9 +36,7 @@ namespace SleekFlow.Todo.IntegrationTest
         public async Task TodoController_Simple_Create_Get_Assert_Todo_Is_Saved_And_Can_Get_Same_Todo_With_Expected_Data()
         {
             var beforeRequest = DateTime.Now.ToUniversalTime();
-            var createResponse =
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
-                    .Content.ReadAsStringAsync());
+            var createResponse = await CreateTodoAsync();
             var afterRequest = DateTime.Now.ToUniversalTime();
 
             var getResponseBody =
@@ -71,28 +70,13 @@ namespace SleekFlow.Todo.IntegrationTest
         [Test]
         public async Task TodoController_Create_Few_Todo_And_Call_GetAll_Returns_The_Todos()
         {
-            var createResponse1 =
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
-                    .Content.ReadAsStringAsync());
-
-            var createResponse2 =
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
-                    .Content.ReadAsStringAsync());
-
-            var createResponse3 =
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
-                    .Content.ReadAsStringAsync());
+            var createResponse1 = await CreateTodoAsync();
+            var createResponse2 = await CreateTodoAsync();
+            var createResponse3 = await CreateTodoAsync();
 
             await Task.Delay(TimeSpan.FromSeconds(1));
-
-            var getResponse = await _client.GetAsync($"/Todo");
             
-            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            
-            var getResponseBody =
-                await getResponse.Content.ReadAsStringAsync();
-            var todos =
-                JsonConvert.DeserializeObject<IEnumerable<GetTodoResponse>>(getResponseBody);
+            var todos = await GetAllAsync();
 
             var todo1 = todos.First(todo => todo.Id == createResponse1.Id);
             var todo2 = todos.First(todo => todo.Id == createResponse2.Id);
@@ -127,7 +111,7 @@ namespace SleekFlow.Todo.IntegrationTest
         {
             for (int i = 0; i < 100; i++)
             {
-                JsonConvert.DeserializeObject<CreateTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
+                JsonConvert.DeserializeObject<GeneralPostTodoResponse>(await (await _client.PostAsync("/Todo/create", null))
                     .Content.ReadAsStringAsync());
             }
 
@@ -153,5 +137,163 @@ namespace SleekFlow.Todo.IntegrationTest
             Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
+        [Test]
+        public async Task TodoController_InsertTodoNameText_Simple_Returns_Todo_With_Text()
+        {
+            var createResp = await CreateTodoAsync();
+            
+            var before = DateTime.UtcNow;
+            var insertResp = (await InsertTodoNameTextAsync(createResp.Id, createResp.LastEventNumber, "Testing!", 0)).Response;
+            var after = DateTime.UtcNow;
+            
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            var todo = (await GetAllAsync()).First();
+
+            Assert.That(insertResp.Id, Is.EqualTo(createResp.Id));
+            Assert.That(insertResp.LastEventNumber, Is.EqualTo(1));
+
+            Assert.That(todo.Id, Is.EqualTo(createResp.Id));
+            Assert.That(todo.Name, Is.EqualTo("Testing!"));
+            Assert.That(todo.Description, Is.Null);
+            Assert.That(todo.DueDate, Is.Null);
+            Assert.That(todo.Completed, Is.False);
+            Assert.That(todo.LastEventNumber, Is.EqualTo(1));
+            Assert.That(todo.LastUpdatedAt, Is.GreaterThan(before).And.LessThan(after));
+            
+        }
+
+        [Test]
+        public async Task TodoController_InsertTodoNameText_Few_Times_Returns_Todo_With_Correct_Text()
+        {
+            var createResp = await CreateTodoAsync();
+            var insertResp1 = (await InsertTodoNameTextAsync(createResp.Id, createResp.LastEventNumber, "testing!", 0)).Response;
+            var insertResp2 = (await InsertTodoNameTextAsync(createResp.Id, insertResp1.LastEventNumber, "I'm ", 0)).Response;
+            var insertResp3 =
+                (await InsertTodoNameTextAsync(createResp.Id, insertResp2.LastEventNumber, "doing some ", 4)).Response;
+            var insertResp4 =
+                (await InsertTodoNameTextAsync(createResp.Id, insertResp3.LastEventNumber, " Good work!", 23)).Response;
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+;
+            var todo = (await GetAllAsync()).First();
+            
+            Assert.That(insertResp1.Id, Is.EqualTo(createResp.Id));
+            Assert.That(insertResp1.LastEventNumber, Is.EqualTo(1));
+
+            Assert.That(insertResp2.Id, Is.EqualTo(createResp.Id));
+            Assert.That(insertResp2.LastEventNumber, Is.EqualTo(2));
+
+            Assert.That(insertResp3.Id, Is.EqualTo(createResp.Id));
+            Assert.That(insertResp3.LastEventNumber, Is.EqualTo(3));
+
+            Assert.That(insertResp4.Id, Is.EqualTo(createResp.Id));
+            Assert.That(insertResp4.LastEventNumber, Is.EqualTo(4));
+
+            Assert.That(todo.Id, Is.EqualTo(createResp.Id));
+            Assert.That(todo.Name, Is.EqualTo("I'm doing some testing! Good work!"));
+            Assert.That(todo.Description, Is.Null);
+            Assert.That(todo.DueDate, Is.Null);
+            Assert.That(todo.Completed, Is.False);
+            Assert.That(todo.LastEventNumber, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task TodoController_InsertTodoNameText_With_Unknown_Id_Returns_404()
+        {
+            var insertResp = await InsertTodoNameTextAsync(Guid.NewGuid(), 0, "Testing", 0);
+            
+            Assert.That(insertResp.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
+
+        [Test]
+        public async Task TodoController_InsertTodoNameText_With_Missing_Body_Returns_400()
+        {
+            var insertResp = await InsertTodoNameTextAsync(Guid.NewGuid(), 0, string.Empty, 0, string.Empty);
+
+            Assert.That(insertResp.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task TodoController_InsertTodoNameText_With_Mismatched_Version_Returns_400()
+        {
+            var createResp = await CreateTodoAsync();
+            var insertResp1 = await InsertTodoNameTextAsync(createResp.Id, -1, string.Empty, 0);
+            var insertResp2 = await InsertTodoNameTextAsync(createResp.Id, 1, string.Empty, 0);
+
+            Assert.That(insertResp1.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(insertResp1.ErrorResponse!.ErrorType, Is.EqualTo(nameof(AggregateWrongExpectedVersionException)));
+            Assert.That(insertResp1.ErrorResponse!.Message, Is.Not.Null);
+            Assert.That(insertResp1.ErrorResponse!.Exception, Is.Not.Null);
+
+            Assert.That(insertResp2.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(insertResp2.ErrorResponse!.ErrorType, Is.EqualTo(nameof(AggregateWrongExpectedVersionException)));
+            Assert.That(insertResp2.ErrorResponse!.Message, Is.Not.Null);
+            Assert.That(insertResp2.ErrorResponse!.Exception, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task TodoController_InsertTodoNameText_With_Invalid_Position_Returns_400()
+        {
+            var createResp = await CreateTodoAsync();
+            var insertResp1 = await InsertTodoNameTextAsync(createResp.Id, 0, string.Empty, -1);
+            var insertResp2 = await InsertTodoNameTextAsync(createResp.Id, 0, string.Empty, 1);
+
+            Assert.That(insertResp1.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(insertResp1.ErrorResponse!.ErrorType, Is.EqualTo(nameof(DomainException)));
+            Assert.That(insertResp1.ErrorResponse!.Message, Is.Not.Null);
+            Assert.That(insertResp1.ErrorResponse!.Exception, Is.Not.Null);
+
+            Assert.That(insertResp2.HttpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(insertResp2.ErrorResponse!.ErrorType, Is.EqualTo(nameof(DomainException)));
+            Assert.That(insertResp2.ErrorResponse!.Message, Is.Not.Null);
+            Assert.That(insertResp2.ErrorResponse!.Exception, Is.Not.Null);
+        }
+
+        private async Task<IEnumerable<GetTodoResponse>> GetAllAsync()
+        {
+            var getResp = await _client.GetAsync($"/Todo");
+
+            var getResponseBody =
+                await getResp.Content.ReadAsStringAsync();
+            var todos = JsonConvert.DeserializeObject<IEnumerable<GetTodoResponse>>(getResponseBody);
+            return todos;
+        }
+
+        private async Task<GeneralPostTodoResponse> CreateTodoAsync()
+        {
+            return JsonConvert.DeserializeObject<GeneralPostTodoResponse>(
+                await (await _client.PostAsync("/Todo/create", null))
+                    .Content.ReadAsStringAsync());
+        }
+
+        private async Task<(GeneralPostTodoResponse? Response, ErrorResponse? ErrorResponse, HttpResponseMessage HttpResponse)>
+            InsertTodoNameTextAsync(Guid id, long expectedVersion, string text, int position, string? contentOverride = null)
+        {
+            var content = JsonConvert.SerializeObject(new InsertTodoNameTextRequest(
+                expectedVersion, text, position));
+
+            if (contentOverride != null) content = contentOverride;
+
+            var insertRespMsg =
+                await _client.PostAsync($"/Todo/{id}/name/inserttext",
+                    new StringContent(content, Encoding.UTF8, "application/json"));
+
+            GeneralPostTodoResponse resp = null;
+            ErrorResponse errResp = null;
+            if (insertRespMsg.IsSuccessStatusCode)
+            {
+                resp = JsonConvert.DeserializeObject<GeneralPostTodoResponse>(await insertRespMsg.Content
+                    .ReadAsStringAsync());
+            }
+            else
+            {
+                errResp = JsonConvert.DeserializeObject<ErrorResponse>(await insertRespMsg.Content
+                    .ReadAsStringAsync());
+            }
+
+
+            return (resp, errResp, insertRespMsg);
+        }
     }
 }

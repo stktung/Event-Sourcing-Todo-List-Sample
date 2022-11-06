@@ -4,5 +4,6 @@ namespace SleekFlow.Todo.Domain;
 
 public interface ITodoRepository
 {
-    Task<long> Save(TodoAggregate todo);
+    Task<long> SaveAsync(TodoAggregate todo);
+    Task<TodoAggregate?> LoadLatestAsync(Guid id, long? expectedVersion = null);
 }

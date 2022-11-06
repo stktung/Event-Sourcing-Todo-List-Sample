@@ -14,8 +14,8 @@ public class TodoProjectionRepositoryTests
         var todo1 = TodoAggregate.Create();
         var todo2 = TodoAggregate.Create();
 
-        await todoRepo.Save(todo1);
-        await todoRepo.Save(todo2);
+        await todoRepo.SaveAsync(todo1);
+        await todoRepo.SaveAsync(todo2);
 
         await projectionRepo.Save(todo1.Id);
         await projectionRepo.Save(todo2.Id);

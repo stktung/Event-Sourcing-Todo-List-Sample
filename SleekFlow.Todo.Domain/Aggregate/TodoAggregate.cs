@@ -30,8 +30,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
         {
             if (!_created) throw new DomainException("Todo has not been created.");
 
-            if (position >= _nameLength)
-                throw new DomainException($"Can not insert beyond end of text. TextLength = '{_nameLength}'");
+            if (position > _nameLength)
+                throw new DomainException($"Can not insert beyond end of text. TextLength: '{_nameLength}' Position: '{position}'");
             
             if (position < 0)
                 throw new DomainException($"Position must be greater than 0. Position = '{position}'");
@@ -39,7 +39,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
             Raise(new TodoNameTextInsertedEvent { Id = Id, Text = text, Position = position });
         }
 
-        private void Apply(Common.DomainEvent e) 
+        private void Apply(DomainEvent e) 
         {
             switch (e)
             {
@@ -49,8 +49,9 @@ namespace SleekFlow.Todo.Domain.Aggregate
                 case TodoNameTextInsertedEvent evt:
                     Apply(evt);
                     break;
-
             }
+
+            _pastEvents.Add(e);
         }
 
         private void Apply(TodoCreatedEvent e)
@@ -63,7 +64,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
             _nameLength += e.Text.Length;
         }
 
-        public static TodoAggregate Load(IEnumerable<Common.DomainEvent> events)
+        public static TodoAggregate Load(IEnumerable<DomainEvent> events)
         {
             var todo = new TodoAggregate();
             

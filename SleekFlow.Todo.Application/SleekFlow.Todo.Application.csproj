@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SleekFlow.Todo.Application.Middleware\SleekFlow.Todo.Application.Middleware.csproj" />
     <ProjectReference Include="..\SleekFlow.Todo.Domain\SleekFlow.Todo.Domain.csproj" />
     <ProjectReference Include="..\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB\SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDB.csproj" />
     <ProjectReference Include="..\SleekFlow.Todo.Infrastructure.EventSubscription\SleekFlow.Todo.Infrastructure.EventSubscription.csproj" />

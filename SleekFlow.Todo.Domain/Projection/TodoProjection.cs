@@ -44,7 +44,7 @@ namespace SleekFlow.Todo.Domain.Projection
             if (string.IsNullOrEmpty(Name) && e.Position > 0)
                 throw new ProjectionException(
                     $"Position not exceed length of name. Position: '{e.Position}' Name length: '0'");
-            if (!string.IsNullOrEmpty(Name) && e.Position >= Name.Length)
+            if (!string.IsNullOrEmpty(Name) && e.Position > Name.Length)
                 throw new ProjectionException(
                     $"Position not exceed length of name. Position: '{e.Position}' Name length: '{Name.Length}'");
 

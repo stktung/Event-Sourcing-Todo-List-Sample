@@ -20,11 +20,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleekFlow.Todo.Domain", "Sl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleekFlow.Todo.IntegrationTest", "SleekFlow.Todo.IntegrationTest\SleekFlow.Todo.IntegrationTest.csproj", "{82F85DDA-ED8D-4B5B-9341-2B357ABE1A62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Infrastructure.EventSubscription", "SleekFlow.Todo.Infrastructure.EventSubscription\SleekFlow.Todo.Infrastructure.EventSubscription.csproj", "{34BE99E7-807C-41CB-94B3-6C21F6F27622}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleekFlow.Todo.Infrastructure.EventSubscription", "SleekFlow.Todo.Infrastructure.EventSubscription\SleekFlow.Todo.Infrastructure.EventSubscription.csproj", "{34BE99E7-807C-41CB-94B3-6C21F6F27622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB", "SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB\SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB.csproj", "{08439CC5-90B9-4FB8-B3F8-35DD3507E489}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB", "SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB\SleekFlow.Todo.Infrastructure.EmbeddedSqliteDB.csproj", "{08439CC5-90B9-4FB8-B3F8-35DD3507E489}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Domain.Common", "SleekFlow.Todo.Domain.Common\SleekFlow.Todo.Domain.Common.csproj", "{EA2D13D9-4350-4385-BCEF-BEA59BC1221C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleekFlow.Todo.Domain.Common", "SleekFlow.Todo.Domain.Common\SleekFlow.Todo.Domain.Common.csproj", "{EA2D13D9-4350-4385-BCEF-BEA59BC1221C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleekFlow.Todo.Application.Middleware", "SleekFlow.Todo.Application.Middleware\SleekFlow.Todo.Application.Middleware.csproj", "{B4AD3340-CFEF-4421-A7D4-F8862E31BD88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,10 @@ Global
 		{EA2D13D9-4350-4385-BCEF-BEA59BC1221C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA2D13D9-4350-4385-BCEF-BEA59BC1221C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA2D13D9-4350-4385-BCEF-BEA59BC1221C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4AD3340-CFEF-4421-A7D4-F8862E31BD88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4AD3340-CFEF-4421-A7D4-F8862E31BD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4AD3340-CFEF-4421-A7D4-F8862E31BD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4AD3340-CFEF-4421-A7D4-F8862E31BD88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

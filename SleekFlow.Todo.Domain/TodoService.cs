@@ -1,5 +1,4 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
-using SleekFlow.Todo.Domain.Projection;
 
 namespace SleekFlow.Todo.Domain
 {
@@ -16,9 +15,23 @@ namespace SleekFlow.Todo.Domain
         {
             var todo = TodoAggregate.Create();
 
-            var latestEventNumber = await _repository.Save(todo);
+            var latestEventNumber = await _repository.SaveAsync(todo);
 
             return (todo.Id, latestEventNumber);
+        }
+
+        public async Task<(TodoAggregate? Todo, long LastEventNumber)> InsertTodoNameTextAsync(long expectedVersion,
+            Guid id, string text, int position)
+        {
+            var todo = await _repository.LoadLatestAsync(id, expectedVersion);
+
+            if (todo == null) return (null, -1);
+
+            todo.InsertTextToName(text, position);
+
+            var lastEventNumber = await _repository.SaveAsync(todo);
+
+            return (todo, lastEventNumber);
         }
     }
 }
