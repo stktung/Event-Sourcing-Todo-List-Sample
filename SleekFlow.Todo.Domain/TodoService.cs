@@ -1,4 +1,5 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SleekFlow.Todo.Domain
 {
@@ -70,6 +71,33 @@ namespace SleekFlow.Todo.Domain
             if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
 
             todo.DeleteTextFromDescription(position, length);
+
+            var lastEventNumber = await _repository.SaveAsync(todo);
+
+            return (todo, lastEventNumber);
+        }
+
+        public async Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoDueDateAsync(long expectedVersion, Guid id, DateTime? dueDate)
+        {
+            var todo = await _repository.LoadLatestAsync(id, expectedVersion);
+
+            if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
+
+            DateTime? dueDateInUtc = dueDate;
+            if (dueDate != null)
+            {
+                switch (dueDate.Value.Kind)
+                {
+                    case DateTimeKind.Local:
+                        dueDateInUtc = dueDate.Value.ToUniversalTime();
+                        break;
+                    case DateTimeKind.Unspecified:
+                        dueDateInUtc = DateTime.SpecifyKind(dueDate.Value, DateTimeKind.Utc);
+                        break;
+                }
+            }
+
+            todo.UpdateDueDate(dueDateInUtc);
 
             var lastEventNumber = await _repository.SaveAsync(todo);
 

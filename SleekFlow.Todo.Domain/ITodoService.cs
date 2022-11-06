@@ -16,4 +16,7 @@ public interface ITodoService
 
     Task<(TodoAggregate todo, long lastEventNumber)> DeleteTodoDescriptionTextAsync(long expectedVersion, Guid id,
         int position, int length);
+    Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoDueDateAsync(long expectedVersion, Guid id,
+        DateTime? dueDate);
+
 }

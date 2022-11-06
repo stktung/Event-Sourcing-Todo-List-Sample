@@ -405,6 +405,138 @@
 			"response": []
 		},
 		{
+			"name": "Update due date to something",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"dueDate\": \"2022-11-06T17:12:06.1156839Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/duedate",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"duedate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update due date to null",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"dueDate\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/duedate",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"duedate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update due date to something else",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"dueDate\": \"2022-11-08T12:10:01.1227147Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/duedate",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"duedate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get All Todo",
 			"request": {
 				"method": "GET",

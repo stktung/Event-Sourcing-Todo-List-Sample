@@ -138,4 +138,34 @@ public static class HttpClientTestHelperExtensions
 
         return (resp, errResp, httpMessage);
     }
+
+    public static async Task<(GeneralPostTodoResponse? Response, ErrorResponse? ErrorResponse, HttpResponseMessage HttpResponse)>
+        UpdateTodoDueDateAsync(this HttpClient client, Guid id, long expectedVersion, DateTime? dueDate, string contentOverride = null)
+    {
+        var content = JsonConvert.SerializeObject(new UpdateTodoDueDateRequest(
+            expectedVersion, dueDate));
+
+        if (contentOverride != null) content = contentOverride;
+
+        var respMsg =
+            await client.PutAsync($"/Todo/{id}/duedate",
+                new StringContent(content, Encoding.UTF8, "application/json"));
+
+        GeneralPostTodoResponse resp = null;
+        ErrorResponse errResp = null;
+        if (respMsg.IsSuccessStatusCode)
+        {
+            resp = JsonConvert.DeserializeObject<GeneralPostTodoResponse>(await respMsg.Content
+                .ReadAsStringAsync());
+        }
+        else
+        {
+            errResp = JsonConvert.DeserializeObject<ErrorResponse>(await respMsg.Content
+                .ReadAsStringAsync());
+        }
+
+
+        return (resp, errResp, respMsg);
+    }
+
 }

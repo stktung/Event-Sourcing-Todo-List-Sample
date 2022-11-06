@@ -25,6 +25,7 @@ public class TodoProjectionEventHandler : ITodoProjectionEventHandler
                 case TodoNameTextDeletedEvent:
                 case TodoDescriptionTextInsertedEvent:
                 case TodoDescriptionTextDeletedEvent:
+                case TodoDueDateUpdatedEvent:
                     _repository.Save(evt.Id);
                     break;
             }

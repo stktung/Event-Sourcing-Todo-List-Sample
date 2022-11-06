@@ -1,5 +1,6 @@
 ﻿using SleekFlow.Todo.Domain.Common;
 using SleekFlow.Todo.Domain.Event;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SleekFlow.Todo.Domain.Aggregate
 {
@@ -85,6 +86,23 @@ namespace SleekFlow.Todo.Domain.Aggregate
             Raise(new TodoDescriptionTextDeletedEvent { Id = Id, Position = position, Length = length });
         }
 
+        public void UpdateDueDate(DateTime? dueDate)
+        {
+            if (!_created) throw new DomainException("Todo has not been created yet.");
+
+            if (dueDate == null)
+            {
+                Raise(new TodoDueDateUpdatedEvent { Id = Id, DueDate = null });
+            }
+            else
+            {
+                if (dueDate.Value.Kind != DateTimeKind.Utc)
+                    throw new DomainException($"Due date must be in UTC format");
+
+                Raise(new TodoDueDateUpdatedEvent { Id = Id, DueDate = dueDate });
+            }
+        }
+
         private void Apply(DomainEvent e) 
         {
             switch (e)
@@ -104,6 +122,9 @@ namespace SleekFlow.Todo.Domain.Aggregate
                 case TodoDescriptionTextDeletedEvent evt:
                     Apply(evt);
                     break;
+                case TodoDueDateUpdatedEvent evt:
+                    Apply(evt);
+                    break;
             }
 
             _pastEvents.Add(e);
@@ -114,6 +135,7 @@ namespace SleekFlow.Todo.Domain.Aggregate
             Id = e.Id;
             _created = true;
         }
+
         private void Apply(TodoNameTextInsertedEvent e)
         {
             _nameLength += e.Text.Length;
@@ -132,6 +154,10 @@ namespace SleekFlow.Todo.Domain.Aggregate
         private void Apply(TodoDescriptionTextDeletedEvent e)
         {
             _descriptionLength -= e.Length;
+        }
+        private void Apply(TodoDueDateUpdatedEvent e)
+        {
+            // no implementation required
         }
 
         public static TodoAggregate Load(IEnumerable<DomainEvent> events)
