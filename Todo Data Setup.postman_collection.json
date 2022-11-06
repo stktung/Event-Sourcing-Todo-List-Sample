@@ -246,7 +246,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"position\": 0,\r\n    \"length\": 1\r\n}",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"position\": 29,\r\n    \"length\": 3\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
