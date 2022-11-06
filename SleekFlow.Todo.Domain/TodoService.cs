@@ -47,5 +47,33 @@ namespace SleekFlow.Todo.Domain
 
             return (todo, lastEventNumber);
         }
+
+        public async Task<(TodoAggregate todo, long lastEventNumber)> InsertTodoDescriptionTextAsync(long expectedVersion,
+            Guid id, string text, int position)
+        {
+            var todo = await _repository.LoadLatestAsync(id, expectedVersion);
+
+            if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
+
+            todo.InsertTextToDescription(text, position);
+
+            var lastEventNumber = await _repository.SaveAsync(todo);
+
+            return (todo, lastEventNumber);
+        }
+
+        public async Task<(TodoAggregate todo, long lastEventNumber)> DeleteTodoDescriptionTextAsync(long expectedVersion,
+            Guid id, int position, int length)
+        {
+            var todo = await _repository.LoadLatestAsync(id, expectedVersion);
+
+            if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
+
+            todo.DeleteTextFromDescription(position, length);
+
+            var lastEventNumber = await _repository.SaveAsync(todo);
+
+            return (todo, lastEventNumber);
+        }
     }
 }

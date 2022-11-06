@@ -6,7 +6,8 @@ namespace SleekFlow.Todo.Domain.Aggregate
     public class TodoAggregate : EventSourcedAggregate
     {
         private bool _created;
-        private long _nameLength = 0;
+        private long _nameLength;
+        private long _descriptionLength;
 
         private TodoAggregate() : base("Todo")
         {
@@ -55,6 +56,35 @@ namespace SleekFlow.Todo.Domain.Aggregate
             Raise(new TodoNameTextDeletedEvent { Id = Id, Position = position, Length = length });
         }
 
+        public void InsertTextToDescription(string text, int position)
+        {
+            if (!_created) throw new DomainException("Todo has not been created yet.");
+
+            if (position < 0)
+                throw new DomainException($"Position must be greater than 0. Position = '{position}'");
+
+            if (position > _descriptionLength)
+                throw new DomainException($"Can not insert to a point beyond end of text. TextLength: '{_descriptionLength}' Position: '{position}'");
+
+            Raise(new TodoDescriptionTextInsertedEvent { Id = Id, Text = text, Position = position });
+        }
+
+        public void DeleteTextFromDescription(int position, int length)
+        {
+            if (!_created) throw new DomainException("Todo has not been created yet.");
+
+            if (position < 0)
+                throw new DomainException($"Position must be greater than 0. Position = '{position}'");
+
+            if (position > _descriptionLength)
+                throw new DomainException($"Can not delete from a position beyond end of text. TextLength: '{_descriptionLength}' Position: '{position}'");
+
+            if (position + length > _descriptionLength)
+                throw new DomainException($"Can not delete text from beyond end of text. TextLength: '{_descriptionLength}' Position: '{position}' LengthToDelete: '{length}'");
+
+            Raise(new TodoDescriptionTextDeletedEvent { Id = Id, Position = position, Length = length });
+        }
+
         private void Apply(DomainEvent e) 
         {
             switch (e)
@@ -66,6 +96,12 @@ namespace SleekFlow.Todo.Domain.Aggregate
                     Apply(evt);
                     break;
                 case TodoNameTextDeletedEvent evt:
+                    Apply(evt);
+                    break;
+                case TodoDescriptionTextInsertedEvent evt:
+                    Apply(evt);
+                    break;
+                case TodoDescriptionTextDeletedEvent evt:
                     Apply(evt);
                     break;
             }
@@ -86,6 +122,16 @@ namespace SleekFlow.Todo.Domain.Aggregate
         private void Apply(TodoNameTextDeletedEvent e)
         {
             _nameLength -= e.Length;
+        }
+
+        private void Apply(TodoDescriptionTextInsertedEvent e)
+        {
+            _descriptionLength += e.Text.Length;
+        }
+
+        private void Apply(TodoDescriptionTextDeletedEvent e)
+        {
+            _descriptionLength -= e.Length;
         }
 
         public static TodoAggregate Load(IEnumerable<DomainEvent> events)

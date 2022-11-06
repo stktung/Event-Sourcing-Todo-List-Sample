@@ -71,6 +71,30 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        [Route("{Id:guid}/description/inserttext")]
+        [HttpPost]
+        public async Task<IActionResult> InsertTodoDescriptionTextAsync([FromRoute] Guid Id, [FromBody] InsertTodoDescriptionTextRequest request)
+        {
+            var (todo, lastEventNumber) = await _service.InsertTodoDescriptionTextAsync(request.ExpectedVersion, Id,
+                request.Text, request.Position);
+
+            if (todo == null) return NotFound();
+
+            return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
+        }
+
+        [Route("{Id:guid}/description/deletetext")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteTodoDescriptionTextAsync([FromRoute] Guid Id, [FromBody] DeleteTodoDescriptionTextRequest request)
+        {
+            var (todo, lastEventNumber) = await _service.DeleteTodoDescriptionTextAsync(request.ExpectedVersion, Id,
+                request.Position, request.length);
+
+            if (todo == null) return NotFound();
+
+            return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
+        }
+
     }
 
     public record GeneralPostTodoResponse(Guid Id, long LastEventNumber);
@@ -80,5 +104,8 @@ namespace SleekFlow.Todo.Application.Controllers
 
     public record InsertTodoNameTextRequest(long ExpectedVersion, string Text, int Position);
     public record DeleteTodoNameTextRequest(long ExpectedVersion, int Position, int length);
+
+    public record InsertTodoDescriptionTextRequest(long ExpectedVersion, string Text, int Position);
+    public record DeleteTodoDescriptionTextRequest(long ExpectedVersion, int Position, int length);
 
 }
