@@ -37,9 +37,18 @@ WHERE Id = @Id";
         return TodoProjection.Load(domainEvents);
     }
 
-    public async Task<IEnumerable<TodoProjection>?> GetAllAsync()
+    public async Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null)
     {
-        var todos = await _db.Connection.QueryAsync($"SELECT * FROM TodoProjections");
+        var builder = new SqlBuilder();
+
+        if (isCompleted != null)
+        {
+            builder.Where("Completed = @IsCompleted", new { IsCompleted = isCompleted });
+        }
+
+        var select = builder.AddTemplate($"SELECT * FROM TodoProjections /**where**/");
+
+        var todos = await _db.Connection.QueryAsync(select.RawSql, select.Parameters);
 
         if (todos == null || !todos.Any()) return null;
 

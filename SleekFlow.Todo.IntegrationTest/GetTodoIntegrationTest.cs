@@ -25,4 +25,22 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
 
         Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
+
+    [Test]
+    public async Task TodoController_GetAll_Completed_Returns_Only_Completed_Todos()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.UpdateTodoIsCompletedAsync(resp1.Id, resp1.LastEventNumber, true);
+        var resp5 = await _client.UpdateTodoIsCompletedAsync(resp3.Id, resp3.LastEventNumber, true);
+
+        var getResp = (await _client.GetAllAsync(true)).ToList();
+        
+        Assert.That(getResp.Count, Is.EqualTo(2));
+        Assert.That(getResp[0].Id, Is.EqualTo(resp1.Id));
+        Assert.That(getResp[0].Completed, Is.True);
+        Assert.That(getResp[1].Completed, Is.True);
+        Assert.That(getResp[1].Id, Is.EqualTo(resp3.Id));
+    }
 }
