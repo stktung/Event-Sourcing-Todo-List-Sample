@@ -1042,18 +1042,40 @@
 			"response": []
 		},
 		{
-			"name": "Get All Todo with Filter and Sorting Copy",
+			"name": "Get All Todo filter by completed and between Nov 1st - 10th, sorted by name desc",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{host}}/Todo",
+					"raw": "https://{{host}}/Todo?isCompleted=true&dueDateIsAfter=2022-11-01&dueDateIsBefore=2022-11-10&sortByField=name&sortByAsc=false",
 					"protocol": "https",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"Todo"
+					],
+					"query": [
+						{
+							"key": "isCompleted",
+							"value": "true"
+						},
+						{
+							"key": "dueDateIsAfter",
+							"value": "2022-11-01"
+						},
+						{
+							"key": "dueDateIsBefore",
+							"value": "2022-11-10"
+						},
+						{
+							"key": "sortByField",
+							"value": "name"
+						},
+						{
+							"key": "sortByAsc",
+							"value": "false"
+						}
 					]
 				}
 			},

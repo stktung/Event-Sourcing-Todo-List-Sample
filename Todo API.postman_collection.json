@@ -87,7 +87,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{host}}/Todo?isCompleted=true&dueDateIsAfter=2022-11-01&dueDateIsBefore=2022-11-10&sortField=name&sortByAsc=false",
+					"raw": "https://{{host}}/Todo?isCompleted=true&dueDateIsAfter=2022-11-01&dueDateIsBefore=2022-11-10&sortByField=dueDate&sortByAsc=true",
 					"protocol": "https",
 					"host": [
 						"{{host}}"
@@ -109,12 +109,12 @@
 							"value": "2022-11-10"
 						},
 						{
-							"key": "sortField",
-							"value": "name"
+							"key": "sortByField",
+							"value": "dueDate"
 						},
 						{
 							"key": "sortByAsc",
-							"value": "false"
+							"value": "true"
 						}
 					]
 				}
