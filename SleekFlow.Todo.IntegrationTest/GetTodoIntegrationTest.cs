@@ -38,6 +38,8 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
         var resp4 = await _client.UpdateTodoIsCompletedAsync(resp1.Id, resp1.LastEventNumber, true);
         var resp5 = await _client.UpdateTodoIsCompletedAsync(resp3.Id, resp3.LastEventNumber, true);
 
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
         var getResp = (await _client.GetAllAsync(true)).ToList();
         
         Assert.That(getResp.Count, Is.EqualTo(2));
@@ -59,7 +61,9 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
 
         var getResp = (await _client.GetAllAsync(dueDateAfter: DateTime.UtcNow.AddDays(5),
             dueDateBefore: DateTime.UtcNow.AddDays(25))).ToList();
-        
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
         Assert.That(getResp.Count, Is.EqualTo(2));
         Assert.That(getResp[0].Id, Is.EqualTo(resp1.Id));
         Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
@@ -142,7 +146,7 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
     }
 
     [Test]
-    public async Task TodoController_GetAll_With_DueDate_Sorting_Desc_Returns_Todos_Sorted_By_DueDate_DescXXXX()
+    public async Task TodoController_GetHistory_Of_Todo_With_All_Kinds_Of_Events_Returns_All_The_Events()
     {
         var resp1 = await _client.CreateTodoAsync();
         var dueDate = DateTime.UtcNow.AddDays(10);

@@ -103,6 +103,10 @@ namespace SleekFlow.Todo.Infrastructure.Test
             public long EventNumber { get; set; }
             public string RaisedBy { get; set; }
             public DateTime RaisedAt { get; set; }
+
+            public TestEvent() : base("Test")
+            {
+            }
         }
     }
 }
