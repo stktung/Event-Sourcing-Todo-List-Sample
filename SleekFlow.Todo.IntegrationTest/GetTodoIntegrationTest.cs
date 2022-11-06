@@ -1,4 +1,5 @@
 using System.Net;
+using SleekFlow.Todo.Application.Controllers;
 
 namespace SleekFlow.Todo.IntegrationTest;
 
@@ -60,5 +61,81 @@ public class GetTodoIntegrationTest : TodoIntegrationTest
         Assert.That(getResp.Count, Is.EqualTo(2));
         Assert.That(getResp[0].Id, Is.EqualTo(resp1.Id));
         Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+    }
+
+    [Test]
+    public async Task TodoController_GetAll_With_Name_Sorting_Returns_Todos_Sorted_By_Name()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.InsertTodoNameTextAsync(resp1.Id, resp1.LastEventNumber, "ZZZ", 0);
+        var resp5 = await _client.InsertTodoNameTextAsync(resp2.Id, resp2.LastEventNumber, "YYY", 0);
+        var resp6 = await _client.InsertTodoNameTextAsync(resp3.Id, resp3.LastEventNumber, "XXX", 0);
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        var getResp = (await _client.GetAllAsync(sortByField: TodoController.SortByField.Name, sortAsc: true)).ToList();
+
+        Assert.That(getResp[0].Id, Is.EqualTo(resp3.Id));
+        Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+        Assert.That(getResp[2].Id, Is.EqualTo(resp1.Id));
+    }
+
+    [Test]
+    public async Task TodoController_GetAll_With_Name_Sorting_Desc_Returns_Todos_Sorted_By_Name_Desc()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.InsertTodoNameTextAsync(resp1.Id, resp1.LastEventNumber, "XXX", 0);
+        var resp5 = await _client.InsertTodoNameTextAsync(resp2.Id, resp2.LastEventNumber, "YYY", 0);
+        var resp6 = await _client.InsertTodoNameTextAsync(resp3.Id, resp3.LastEventNumber, "ZZZ", 0);
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        var getResp = (await _client.GetAllAsync(sortByField: TodoController.SortByField.Name, sortAsc: false)).ToList();
+
+        Assert.That(getResp[0].Id, Is.EqualTo(resp3.Id));
+        Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+        Assert.That(getResp[2].Id, Is.EqualTo(resp1.Id));
+    }
+
+    [Test]
+    public async Task TodoController_GetAll_With_DueDate_Sorting_Returns_Todos_Sorted_By_DueDate()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.UpdateTodoDueDateAsync(resp1.Id, resp1.LastEventNumber, DateTime.UtcNow.AddDays(30));
+        var resp5 = await _client.UpdateTodoDueDateAsync(resp2.Id, resp2.LastEventNumber, DateTime.UtcNow.AddDays(20));
+        var resp6 = await _client.UpdateTodoDueDateAsync(resp3.Id, resp3.LastEventNumber, DateTime.UtcNow.AddDays(10));
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        var getResp = (await _client.GetAllAsync(sortByField: TodoController.SortByField.DueDate, sortAsc: true)).ToList();
+
+        Assert.That(getResp[0].Id, Is.EqualTo(resp3.Id));
+        Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+        Assert.That(getResp[2].Id, Is.EqualTo(resp1.Id));
+    }
+
+    [Test]
+    public async Task TodoController_GetAll_With_DueDate_Sorting_Desc_Returns_Todos_Sorted_By_DueDate_Desc()
+    {
+        var resp1 = await _client.CreateTodoAsync();
+        var resp2 = await _client.CreateTodoAsync();
+        var resp3 = await _client.CreateTodoAsync();
+        var resp4 = await _client.UpdateTodoDueDateAsync(resp1.Id, resp1.LastEventNumber, DateTime.UtcNow.AddDays(10));
+        var resp5 = await _client.UpdateTodoDueDateAsync(resp2.Id, resp2.LastEventNumber, DateTime.UtcNow.AddDays(20));
+        var resp6 = await _client.UpdateTodoDueDateAsync(resp3.Id, resp3.LastEventNumber, DateTime.UtcNow.AddDays(30));
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        var getResp = (await _client.GetAllAsync(sortByField: TodoController.SortByField.DueDate, sortAsc: false)).ToList();
+
+        Assert.That(getResp[0].Id, Is.EqualTo(resp3.Id));
+        Assert.That(getResp[1].Id, Is.EqualTo(resp2.Id));
+        Assert.That(getResp[2].Id, Is.EqualTo(resp1.Id));
     }
 }

@@ -30,13 +30,22 @@ namespace SleekFlow.Todo.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null, [FromQuery] DateTime? dueDateIsBefore = null, [FromQuery] DateTime? dueDateIsAfter = null)
+        public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null,
+            [FromQuery] DateTime? dueDateIsBefore = null, [FromQuery] DateTime? dueDateIsAfter = null,
+            [FromQuery] SortByField? sortByField = null, [FromQuery] bool? sortByAsc = null)
         {
-            var todos = await _projectionRepository.GetAllAsync(isCompleted, dueDateIsBefore, dueDateIsAfter);
+            var todos = await _projectionRepository.GetAllAsync(isCompleted, dueDateIsBefore, dueDateIsAfter,
+                (Domain.SortByField?)sortByField, sortByAsc);
 
             if (todos == null || !todos.Any()) return NotFound();
 
             return Ok(todos.Select(todo => _mapper.Map<GetTodoResponse>(todo)));
+        }
+
+        public enum SortByField
+        {
+            Name,
+            DueDate
         }
 
         [HttpPost("create")]

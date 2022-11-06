@@ -38,7 +38,7 @@ WHERE Id = @Id";
     }
 
     public async Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null, DateTime? dueDateIsBefore = null,
-        DateTime? dueDateIsAfter = null)
+        DateTime? dueDateIsAfter = null, SortByField? sortByField = null, bool? sortByAsc = null)
     {
         var builder = new SqlBuilder();
 
@@ -57,7 +57,33 @@ WHERE Id = @Id";
             builder.Where("DueDate >= @DueDateIsAfter", new { DueDateIsAfter = DateTimeHelper.ConvertToUtc(dueDateIsAfter) });
         }
 
-        var select = builder.AddTemplate($"SELECT * FROM TodoProjections /**where**/");
+        if (sortByField != null)
+        {
+            if (sortByField == SortByField.Name)
+            {
+                if (sortByAsc == null || sortByAsc.Value)
+                {
+                    builder.OrderBy($"Name ASC");
+                }
+                else
+                {
+                    builder.OrderBy($"Name DESC");
+                }
+            }
+            else if (sortByField == SortByField.DueDate)
+            {
+                if (sortByAsc == null || sortByAsc.Value)
+                {
+                    builder.OrderBy($"DueDate ASC");
+                }
+                else
+                {
+                    builder.OrderBy($"DueDate DESC");
+                }
+            }
+        }
+
+        var select = builder.AddTemplate($"SELECT * FROM TodoProjections /**where**/ /**orderby**/");
 
         var todos = await _db.Connection.QueryAsync(select.RawSql, select.Parameters);
 
