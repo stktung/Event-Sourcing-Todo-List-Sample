@@ -260,6 +260,50 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Todo Due Date",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"dueDate\": \"2022-11-06T17:12:06.1156839Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/duedate",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"duedate"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
