@@ -304,6 +304,50 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Todo Completion Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"isCompleted\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/completed",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"completed"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
