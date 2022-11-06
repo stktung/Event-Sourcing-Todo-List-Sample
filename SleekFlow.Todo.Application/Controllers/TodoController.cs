@@ -107,7 +107,17 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        [Route("{Id:guid}/completed")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateTodoIsCompleteAsync([FromRoute] Guid Id, [FromBody] UpdateTodoIsCompletedRequest request)
+        {
+            var (todo, lastEventNumber) = await _service.UpdateTodoIsCompletedAsync(request.ExpectedVersion, Id,
+                request.IsCompleted);
 
+            if (todo == null) return NotFound();
+
+            return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
+        }
     }
 
     public record GeneralPostTodoResponse(Guid Id, long LastEventNumber);
@@ -123,4 +133,5 @@ namespace SleekFlow.Todo.Application.Controllers
     public record DeleteTodoDescriptionTextRequest(long ExpectedVersion, int Position, int length);
 
     public record UpdateTodoDueDateRequest(long ExpectedVersion, DateTime? DueDate);
+    public record UpdateTodoIsCompletedRequest(long ExpectedVersion, bool IsCompleted);
 }

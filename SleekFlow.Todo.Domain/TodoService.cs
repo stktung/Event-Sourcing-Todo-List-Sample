@@ -1,5 +1,4 @@
 ﻿using SleekFlow.Todo.Domain.Aggregate;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SleekFlow.Todo.Domain
 {
@@ -103,5 +102,19 @@ namespace SleekFlow.Todo.Domain
 
             return (todo, lastEventNumber);
         }
+
+        public async Task<(TodoAggregate todo, long lastEventNumber)> UpdateTodoIsCompletedAsync(long expectedVersion, Guid id, bool isCompleted)
+        {
+            var todo = await _repository.LoadLatestAsync(id, expectedVersion);
+
+            if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
+            
+            todo.UpdateIsCompleted(isCompleted);
+
+            var lastEventNumber = await _repository.SaveAsync(todo);
+
+            return (todo, lastEventNumber);
+        }
+
     }
 }
