@@ -81,4 +81,61 @@ public static class HttpClientTestHelperExtensions
 
         return (resp, errResp, httpMessage);
     }
+
+    public static async Task<(GeneralPostTodoResponse? Response, ErrorResponse? ErrorResponse, HttpResponseMessage HttpResponse)>
+        InsertTodoDescriptionTextAsync(this HttpClient client, Guid id, long expectedVersion, string text, int position, string? contentOverride = null)
+    {
+        var content = JsonConvert.SerializeObject(new InsertTodoDescriptionTextRequest(
+            expectedVersion, text, position));
+
+        if (contentOverride != null) content = contentOverride;
+
+        var insertRespMsg =
+            await client.PostAsync($"/Todo/{id}/description/inserttext",
+                new StringContent(content, Encoding.UTF8, "application/json"));
+
+        GeneralPostTodoResponse resp = null;
+        ErrorResponse errResp = null;
+        if (insertRespMsg.IsSuccessStatusCode)
+        {
+            resp = JsonConvert.DeserializeObject<GeneralPostTodoResponse>(await insertRespMsg.Content
+                .ReadAsStringAsync());
+        }
+        else
+        {
+            errResp = JsonConvert.DeserializeObject<ErrorResponse>(await insertRespMsg.Content
+                .ReadAsStringAsync());
+        }
+
+
+        return (resp, errResp, insertRespMsg);
+    }
+
+    public static async Task<(GeneralPostTodoResponse? Response, ErrorResponse? ErrorResponse, HttpResponseMessage HttpResponse)>
+        DeleteTodoDescriptionTextAsync(this HttpClient client, Guid id, long expectedVersion, int position, int length, string? contentOverride = null)
+    {
+        var content = JsonConvert.SerializeObject(new DeleteTodoDescriptionTextRequest(
+            expectedVersion, position, length));
+
+        if (contentOverride != null) content = contentOverride;
+
+        var httpMessage =
+            await client.PostAsync($"/Todo/{id}/description/deletetext",
+                new StringContent(content, Encoding.UTF8, "application/json"));
+
+        GeneralPostTodoResponse resp = null;
+        ErrorResponse errResp = null;
+        if (httpMessage.IsSuccessStatusCode)
+        {
+            resp = JsonConvert.DeserializeObject<GeneralPostTodoResponse>(await httpMessage.Content
+                .ReadAsStringAsync());
+        }
+        else
+        {
+            errResp = JsonConvert.DeserializeObject<ErrorResponse>(await httpMessage.Content
+                .ReadAsStringAsync());
+        }
+
+        return (resp, errResp, httpMessage);
+    }
 }

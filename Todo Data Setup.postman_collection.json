@@ -135,7 +135,7 @@
 			"response": []
 		},
 		{
-			"name": "Insert Todo Name Text",
+			"name": "Insert name",
 			"event": [
 				{
 					"listen": "test",
@@ -180,7 +180,7 @@
 			"response": []
 		},
 		{
-			"name": "Insert Todo Name Text to the End",
+			"name": "Insert more text to name with some typo",
 			"event": [
 				{
 					"listen": "test",
@@ -225,7 +225,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete Todo Name Text Copy",
+			"name": "Delete typo in name",
 			"event": [
 				{
 					"listen": "test",
@@ -264,6 +264,141 @@
 						"{{id}}",
 						"name",
 						"deletetext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert description with some typo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"text\": \"The database layer should be abstracted with the repository layer to be called from the service layer. The interface will be stored in the domain layer and the concreteeeeee class in the repository layer\",\r\n    \"position\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/description/inserttext",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"description",
+						"inserttext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete type in description",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"position\": 168,\r\n    \"length\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/description/deletetext",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"description",
+						"deletetext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert more description to the end",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// increment \"expectedVersion\" if POST is successful\r",
+							"if (pm.response.code == 200) {\r",
+							"    var version = pm.environment.get(\"expectedVersion\");\r",
+							"    pm.environment.set(\"expectedVersion\", +version+1);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"expectedVersion\": {{expectedVersion}},\r\n    \"text\": \". This should be completed first before other tasks.\",\r\n    \"position\": 198\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}/Todo/{{id}}/description/inserttext",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Todo",
+						"{{id}}",
+						"description",
+						"inserttext"
 					]
 				}
 			},
