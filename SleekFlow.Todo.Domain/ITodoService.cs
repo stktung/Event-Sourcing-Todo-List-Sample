@@ -6,6 +6,9 @@ public interface ITodoService
 {
     Task<(Guid Id, long LastEventNumber)> CreateTodoAsync();
 
-    Task<(TodoAggregate? Todo, long LastEventNumber)> InsertTodoNameTextAsync(long expectedVersion, Guid id,
+    Task<(TodoAggregate todo, long lastEventNumber)> InsertTodoNameTextAsync(long expectedVersion, Guid id,
         string text, int position);
+
+    Task<(TodoAggregate todo, long lastEventNumber)> DeleteTodoNameTextAsync(long expectedVersion, Guid id,
+        int position, int length);
 }

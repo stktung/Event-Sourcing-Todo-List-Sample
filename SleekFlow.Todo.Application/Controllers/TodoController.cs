@@ -58,6 +58,19 @@ namespace SleekFlow.Todo.Application.Controllers
 
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
+
+        [Route("{Id:guid}/name/deletetext")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteTodoNameTextAsync([FromRoute] Guid Id, [FromBody] DeleteTodoNameTextRequest request)
+        {
+            var (todo, lastEventNumber) = await _service.DeleteTodoNameTextAsync(request.ExpectedVersion, Id,
+                request.Position, request.length);
+
+            if (todo == null) return NotFound();
+
+            return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
+        }
+
     }
 
     public record GeneralPostTodoResponse(Guid Id, long LastEventNumber);
@@ -66,4 +79,6 @@ namespace SleekFlow.Todo.Application.Controllers
         DateTime LastUpdatedAt, long LastEventNumber);
 
     public record InsertTodoNameTextRequest(long ExpectedVersion, string Text, int Position);
+    public record DeleteTodoNameTextRequest(long ExpectedVersion, int Position, int length);
+
 }

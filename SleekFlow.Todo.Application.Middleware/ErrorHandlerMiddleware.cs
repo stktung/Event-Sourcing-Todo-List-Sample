@@ -32,6 +32,9 @@ public class ErrorHandlerMiddleware
                 case ProjectionException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
+                case KeyNotFoundException:
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    break;
                 default:
                     // unhandled error
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
