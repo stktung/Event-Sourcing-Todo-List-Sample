@@ -82,19 +82,7 @@ namespace SleekFlow.Todo.Domain
 
             if (todo == null) throw new KeyNotFoundException($"Todo not found. Id: '{id}'");
 
-            DateTime? dueDateInUtc = dueDate;
-            if (dueDate != null)
-            {
-                switch (dueDate.Value.Kind)
-                {
-                    case DateTimeKind.Local:
-                        dueDateInUtc = dueDate.Value.ToUniversalTime();
-                        break;
-                    case DateTimeKind.Unspecified:
-                        dueDateInUtc = DateTime.SpecifyKind(dueDate.Value, DateTimeKind.Utc);
-                        break;
-                }
-            }
+            var dueDateInUtc = DateTimeHelper.ConvertToUtc(dueDate);
 
             todo.UpdateDueDate(dueDateInUtc);
 

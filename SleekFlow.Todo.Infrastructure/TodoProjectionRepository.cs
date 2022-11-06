@@ -37,9 +37,55 @@ WHERE Id = @Id";
         return TodoProjection.Load(domainEvents);
     }
 
-    public async Task<IEnumerable<TodoProjection>?> GetAllAsync()
+    public async Task<IEnumerable<TodoProjection>?> GetAllAsync(bool? isCompleted = null, DateTime? dueDateIsBefore = null,
+        DateTime? dueDateIsAfter = null, SortByField? sortByField = null, bool? sortByAsc = null)
     {
-        var todos = await _db.Connection.QueryAsync($"SELECT * FROM TodoProjections");
+        var builder = new SqlBuilder();
+
+        if (isCompleted != null)
+        {
+            builder.Where("Completed = @IsCompleted", new { IsCompleted = isCompleted });
+        }
+
+        if (dueDateIsBefore != null)
+        {
+            builder.Where("DueDate <= @DueDateIsBefore", new { DueDateIsBefore = DateTimeHelper.ConvertToUtc(dueDateIsBefore) });
+        }
+
+        if (dueDateIsAfter != null)
+        {
+            builder.Where("DueDate >= @DueDateIsAfter", new { DueDateIsAfter = DateTimeHelper.ConvertToUtc(dueDateIsAfter) });
+        }
+
+        if (sortByField != null)
+        {
+            if (sortByField == SortByField.Name)
+            {
+                if (sortByAsc == null || sortByAsc.Value)
+                {
+                    builder.OrderBy($"Name ASC");
+                }
+                else
+                {
+                    builder.OrderBy($"Name DESC");
+                }
+            }
+            else if (sortByField == SortByField.DueDate)
+            {
+                if (sortByAsc == null || sortByAsc.Value)
+                {
+                    builder.OrderBy($"DueDate ASC");
+                }
+                else
+                {
+                    builder.OrderBy($"DueDate DESC");
+                }
+            }
+        }
+
+        var select = builder.AddTemplate($"SELECT * FROM TodoProjections /**where**/ /**orderby**/");
+
+        var todos = await _db.Connection.QueryAsync(select.RawSql, select.Parameters);
 
         if (todos == null || !todos.Any()) return null;
 
