@@ -13,7 +13,7 @@ public class TodoRepositoryTests
         var projectionRepo = new TodoProjectionRepository(store, db);
         var todo = TodoAggregate.Create();
 
-        await todoRepo.Save(todo);
+        await todoRepo.SaveAsync(todo);
         var todoProjection = await projectionRepo.GetFromEventStoreAsync(todo.Id);
 
         Assert.That(todoProjection.Id, Is.EqualTo(todo.Id));

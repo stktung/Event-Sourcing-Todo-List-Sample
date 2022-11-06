@@ -5,5 +5,5 @@ namespace SleekFlow.Todo.Application.EventHandler;
 
 public interface ITodoProjectionEventHandler
 {
-    HandlerResult HandleEvent(IEvent evt);
+    HandlerResult HandleEvent(DomainEvent evt);
 }

@@ -1,5 +1,6 @@
 ﻿using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Domain.Common;
+using SleekFlow.Todo.Domain.Event;
 using SleekFlow.Todo.Infrastructure.EventSubscription;
 
 namespace SleekFlow.Todo.Application.EventHandler;
@@ -13,16 +14,22 @@ public class TodoProjectionEventHandler : ITodoProjectionEventHandler
         _repository = repository;
     }
 
-    public HandlerResult HandleEvent(IEvent evt)
+    public HandlerResult HandleEvent(DomainEvent evt)
     {
-        switch (evt)
+        try
         {
-            case TodoCreatedEvent todoCreatedEvent:
-                _repository.Save(todoCreatedEvent.Id);
-                break;
-            default:
-                return new HandlerResult
-                    { Error = Errors.ParkEvent<IEvent>($"Can not handle event of type '{evt.GetType()}'") };
+            switch (evt)
+            {
+                case TodoCreatedEvent:
+                case TodoNameTextInsertedEvent:
+                    _repository.Save(evt.Id);
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            return new HandlerResult
+                { Error = Errors.ParkEvent<DomainEvent>($"Unhandled Exception: {e}") };
         }
 
         return new HandlerResult { IsSuccess = true };

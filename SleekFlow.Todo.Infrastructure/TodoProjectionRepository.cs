@@ -8,8 +8,14 @@ namespace SleekFlow.Todo.Infrastructure;
 
 public class TodoProjectionRepository : ITodoProjectionRepository
 {
-    private const string InsertTableTodoProjection =
-        @"INSERT INTO TodoProjections VALUES (@Id, @Name, @Description, @DueDate, @Completed, @LastUpdatedAt, @LastEventNumber)";
+    private const string InsertSql =
+        @"INSERT INTO TodoProjections 
+VALUES (@Id, @Name, @Description, @DueDate, @Completed, @LastUpdatedAt, @LastEventNumber)";
+
+    private const string UpdateSql =
+        @"UPDATE TodoProjections 
+SET Name = @Name, Description = @Description, DueDate = @DueDate, Completed = @Completed, LastUpdatedAt = @LastUpdatedAt, LastEventNumber = @LastEventNumber 
+WHERE Id = @Id";
 
     private readonly IEventStore _eventStore;
     private readonly ISqlDb _db;
@@ -26,28 +32,9 @@ public class TodoProjectionRepository : ITodoProjectionRepository
 
         if (events == null) return null;
 
-        var domainEvents = events.Select(esEvent => EventMapper.MapToDomainEvent(esEvent)).ToList();
+        var domainEvents = events.Select(EventMapper.MapToDomainEvent).ToList();
 
         return TodoProjection.Load(domainEvents);
-    }
-
-    public async Task Save(Guid id)
-    {
-        var todo = await GetFromEventStoreAsync(id);
-
-        if (todo == null) throw new ArgumentException($"Id '{id}' not found");
-
-        await _db.Connection.ExecuteAsync(InsertTableTodoProjection,
-            new
-            {
-                Id = todo.Id.ToString(),
-                todo.Name,
-                todo.Description,
-                todo.DueDate,
-                todo.Completed,
-                todo.LastUpdatedAt,
-                todo.LastEventNumber
-            });
     }
 
     public async Task<IEnumerable<TodoProjection>?> GetAllAsync()
@@ -74,10 +61,49 @@ public class TodoProjectionRepository : ITodoProjectionRepository
         return list;
     }
 
+    public async Task Save(Guid id)
+    {
+        var todo = await GetFromEventStoreAsync(id);
+
+        if (todo == null) throw new ArgumentException($"Id '{id}' not found");
+
+        var count = await _db.Connection.ExecuteScalarAsync<int>($"SELECT COUNT(1) FROM TodoProjections WHERE Id = '{id}'");
+
+        if (count == 0)
+        {
+            await _db.Connection.ExecuteAsync(InsertSql,
+                new
+                {
+                    Id = todo.Id.ToString(),
+                    todo.Name,
+                    todo.Description,
+                    todo.DueDate,
+                    todo.Completed,
+                    todo.LastUpdatedAt,
+                    todo.LastEventNumber
+                });
+        }
+        else
+        {
+            await _db.Connection.ExecuteAsync(UpdateSql,
+                new
+                {
+                    Id = todo.Id.ToString(),
+                    todo.Name,
+                    todo.Description,
+                    todo.DueDate,
+                    todo.Completed,
+                    todo.LastUpdatedAt,
+                    todo.LastEventNumber
+                });
+        }
+
+    }
+
     private static DateTime? ConvertToUtcDateTime(string? s)
     {
         if (s == null) return null;
         
-        return DateTime.SpecifyKind(Convert.ToDateTime(s), DateTimeKind.Utc);
+        return Convert.ToDateTime(s).ToUniversalTime();
     }
 }

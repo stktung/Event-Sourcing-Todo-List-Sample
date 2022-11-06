@@ -1,4 +1,5 @@
 using SleekFlow.Todo.Application.EventHandler;
+using SleekFlow.Todo.Application.Middleware;
 using SleekFlow.Todo.Domain;
 using SleekFlow.Todo.Infrastructure;
 using SleekFlow.Todo.Infrastructure.EmbeddedEventStoreDb;
@@ -42,6 +43,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<ErrorHandlerMiddleware>();
+
 app.MapControllers();
+
 
 app.Run();
