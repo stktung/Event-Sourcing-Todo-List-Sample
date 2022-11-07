@@ -13,11 +13,11 @@ Todo list REST API designed for real-time collaboration and offline/disconnected
 | Postman Production Environment file | https://github.com/stktung/SleekFlow.Todo/blob/master/postman_environment.json |
 
 ## Contents
-- Highlights
-- Development Instructions
-- Use Case Overview
-- Architectural Overview
-- DevOps CI/CD Process
+- [Highlights](https://github.com/stktung/SleekFlow.Todo#highlights)
+- [Development Instructions](https://github.com/stktung/SleekFlow.Todo#development-instructions)
+- [Use Case Overview](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
+- [Architectural Overview](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
+- [DevOps CI/CD Process](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
 
 # Highlights
 
@@ -497,17 +497,19 @@ graph LR
 
 `TodoAggregate` manages the state and enforces domain validation logic. In short, any change can be made while the Todo is `incomplete`. But when it's `complete` nothing can be changed unless it is marked as `incomplete` again. See below: 
 
+```mermaid
 stateDiagram-v2
     [*] --> Incomplete : TodoCreated
     Incomplete --> Incomplete : TodoNameTextInserted<br>TodoNameTextDeleted<br>TodoDescriptionTextInserted<br>TodoDescriptionTextDeleted<br>TodoDueDateUpdated
     Incomplete --> Completed : TodoCompleteMarked
     Completed --> Incomplete : TodoCompleteUnmarked
-    
+```
 
 # Github Action CI/CD Process
 
 Github action workflow: https://github.com/stktung/SleekFlow.Todo/blob/master/.github/workflows/azure-container-webapp.yml
 
+```mermaid
 graph LR
     Local[Local Machine]
     Github[(Github)]
@@ -523,3 +525,4 @@ graph LR
     GA -- 6. request Azure App Service to deploy --> AppService
     GCR -- 7. pull image --> AppService
     AppService -- 8. run image --> AppService
+```
