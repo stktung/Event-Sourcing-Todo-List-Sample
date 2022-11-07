@@ -1,6 +1,7 @@
 using AutoMapper;
 using EventStore.Transport.Http;
 using Microsoft.AspNetCore.Mvc;
+using SleekFlow.Todo.Application.Middleware;
 using SleekFlow.Todo.Application.Model;
 using SleekFlow.Todo.Application.Model.Event;
 using SleekFlow.Todo.Domain;
@@ -22,7 +23,15 @@ namespace SleekFlow.Todo.Application.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get properties of a Todo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Todo object with its properties</returns>
         [Route("{id:guid}")]
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(404)]
+        [Produces(ContentType.Json)]
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
@@ -33,7 +42,7 @@ namespace SleekFlow.Todo.Application.Controllers
         }
 
         /// <summary>
-        /// Get all the events for a Todo
+        /// Get all the events of a Todo
         /// </summary>
         /// <param name="id"></param>
         /// <returns>List of events of the Todo</returns>
@@ -41,6 +50,7 @@ namespace SleekFlow.Todo.Application.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<DomainEventWebDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(404)]
+        [Produces(ContentType.Json)]
         public async Task<IActionResult> GetHistoryAsync([FromRoute] Guid id)
         {
             var events = await _service.GetHistory(id);
@@ -63,6 +73,7 @@ namespace SleekFlow.Todo.Application.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GetTodoResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(404)]
+        [Produces(ContentType.Json)]
         public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null,
             [FromQuery] DateTime? dueDateIsBefore = null, [FromQuery] DateTime? dueDateIsAfter = null,
             [FromQuery] SortByField? sortByField = null, [FromQuery] bool? sortByAsc = null)
@@ -81,6 +92,12 @@ namespace SleekFlow.Todo.Application.Controllers
             DueDate
         }
 
+        /// <summary>
+        /// Creates a new empty Todo
+        /// </summary>
+        /// <returns>Todo Id and last event number </returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [Produces(ContentType.Json)]
         [HttpPost("create")]
         public async Task<GeneralPostTodoResponse> CreateTodoAsync()
         {
@@ -89,7 +106,17 @@ namespace SleekFlow.Todo.Application.Controllers
             return new GeneralPostTodoResponse(result.Id, result.LastEventNumber);
         }
 
+        /// <summary>
+        /// Inserts piece of text to Todo's name at specified position
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Route("{Id:guid}/name/inserttext")]
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [HttpPost]
         public async Task<IActionResult> InsertTodoNameTextAsync([FromRoute] Guid Id, [FromBody] InsertTodoNameTextRequest request)
         {
@@ -101,6 +128,16 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        /// <summary>
+        /// Deletes piece of text from Todo's name at specified position
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [Route("{Id:guid}/name/deletetext")]
         [HttpPost]
         public async Task<IActionResult> DeleteTodoNameTextAsync([FromRoute] Guid Id, [FromBody] DeleteTodoNameTextRequest request)
@@ -113,6 +150,16 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        /// <summary>
+        /// Inserts piece of text to Todo's description at specified position
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [Route("{Id:guid}/description/inserttext")]
         [HttpPost]
         public async Task<IActionResult> InsertTodoDescriptionTextAsync([FromRoute] Guid Id, [FromBody] InsertTodoDescriptionTextRequest request)
@@ -125,6 +172,16 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        /// <summary>
+        /// Deletes piece of text from Todo's description at specified position
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [Route("{Id:guid}/description/deletetext")]
         [HttpPost]
         public async Task<IActionResult> DeleteTodoDescriptionTextAsync([FromRoute] Guid Id, [FromBody] DeleteTodoDescriptionTextRequest request)
@@ -137,6 +194,16 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        /// <summary>
+        /// Updates Todo's due date
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [Route("{Id:guid}/duedate")]
         [HttpPut]
         public async Task<IActionResult> UpdateTodoDueDateAsync([FromRoute] Guid Id, [FromBody] UpdateTodoDueDateRequest request)
@@ -149,6 +216,16 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(new GeneralPostTodoResponse(todo.Id, lastEventNumber));
         }
 
+        /// <summary>
+        /// Set or unset a Todo's completion status
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(GetTodoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [Produces(ContentType.Json)]
         [Route("{Id:guid}/completed")]
         [HttpPut]
         public async Task<IActionResult> UpdateTodoIsCompleteAsync([FromRoute] Guid Id, [FromBody] UpdateTodoIsCompletedRequest request)
