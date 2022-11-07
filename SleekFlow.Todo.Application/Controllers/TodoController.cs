@@ -1,4 +1,5 @@
 using AutoMapper;
+using EventStore.Transport.Http;
 using Microsoft.AspNetCore.Mvc;
 using SleekFlow.Todo.Application.Model;
 using SleekFlow.Todo.Application.Model.Event;
@@ -31,8 +32,15 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(_mapper.Map<GetTodoResponse>(todo));
         }
 
+        /// <summary>
+        /// Get all the events for a Todo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>List of events of the Todo</returns>
         [Route("{id:guid}/history")]
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<DomainEventWebDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetHistoryAsync([FromRoute] Guid id)
         {
             var events = await _service.GetHistory(id);
@@ -41,8 +49,20 @@ namespace SleekFlow.Todo.Application.Controllers
             return Ok(events.Select(e => _mapper.Map(e, e.GetType(), typeof(DomainEventWebDto))));
         }
 
-
+        /// <summary>
+        /// Get all Todos and optionally filter and/or sort by certain fields
+        /// </summary>
+        /// <param name="isCompleted">Filter by todos that completed</param>
+        /// <param name="dueDateIsBefore">Filter by todos with due date before this. E.g. 2022-11-30</param>
+        /// <param name="dueDateIsAfter">Filter by todos with due date after this. E.g. 2022-11-01 </param>
+        /// <param name="sortByField">Sort by this field. Currently only "Name" (0) and "DueDate" (1) is supported</param>
+        /// <param name="sortByAsc">Sort asc if this is true, otherwise sorts descending</param>
+        /// <returns>List of Todos</returns>
+        /// <response code="200">Returns if one or more Todo is found</response>
+        /// <response code="404">Returns if no Todo can found</response>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<GetTodoResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetAllAsync([FromQuery] bool? isCompleted = null,
             [FromQuery] DateTime? dueDateIsBefore = null, [FromQuery] DateTime? dueDateIsAfter = null,
             [FromQuery] SortByField? sortByField = null, [FromQuery] bool? sortByAsc = null)
