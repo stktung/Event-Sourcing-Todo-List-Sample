@@ -13,11 +13,11 @@ Todo list REST API designed for real-time collaboration and offline/disconnected
 | Postman Production Environment file | https://github.com/stktung/SleekFlow.Todo/blob/master/postman_environment.json |
 
 ## Contents
-- Highlights
-- Development Instructions
-- Use Case Overview
-- Architectural Overview
-- DevOps CI/CD Process
+- [Highlights](https://github.com/stktung/SleekFlow.Todo#highlights)
+- [Development Instructions](https://github.com/stktung/SleekFlow.Todo#development-instructions)
+- [Use Case Overview](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
+- [Architectural Overview](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
+- [DevOps CI/CD Process](https://github.com/stktung/SleekFlow.Todo#use-case-overview)
 
 # Highlights
 
@@ -79,15 +79,32 @@ Todo list REST API designed for real-time collaboration and offline/disconnected
 - Automation testing with Github Action
 - Support for Todo attributes 
 
-# Development Instructions
+# Test/Development Instructions
 
-## Requirements
+## Postman
+
+### Test Instructions
+1. Load all three postman files (see link above)
+2. Run the entire `Todo Data Setup` collection to setup some initial data
+3. Run any API in `Todo API` collection to test
+
+### Variables
+
+| Variable | Remarks | When is it updated |
+| -------- | ------- | ------------------ |
+| Host | Url of the host. This is by default the production URL | Never |
+| Id | This is used in many GET/POST/PUT APIs | Whenever `Create a Todo` is executed, this becomes the new Todo's Id |
+| ExpectedVersion | This is used by all POST/PUT APIs to support merge/conflict resolution | After any successful (OK 200) POST/PUT call, this is incremented by one | 
+
+## Development Instructions
+
+### Requirements
 - .NET 6 SDK
 - Visual Studio 2022
 - Docker Desktop 4.13
 
-## ⚠ First Time Setup ⚠
-### Add environment variables for in-memory EventStoreDB connection
+### ⚠ First Time Setup ⚠
+#### Add environment variables for in-memory EventStoreDB connection
 1. Open solution from Visual Studio
 2. Click `Debug` menu and click `SleekFlow.Todo.Application Debug Properties` 
 
@@ -99,20 +116,10 @@ Todo list REST API designed for real-time collaboration and offline/disconnected
 
 <img width="591" alt="image" src="https://user-images.githubusercontent.com/132192/200365525-cd837566-b87d-4df2-8d89-9dbd2fb14569.png">
 
-## Build Instruction
+### Build
 1. Open solution with Visual Studio
 2. Hit F5
 3. Swagger will show up
-
-## Postman Notes
-- To run, load all three postman files (see link above)
-- 2 handy variables have been setup to help testing
-
-| Variable | Remarks | When is it updated |
-| -------- | ------- | ------------------ |
-| Host | Url of the host. This is by default the production URL | Never |
-| Id | This is used in many GET/POST/PUT APIs | Whenever `Create a Todo` is executed, this becomes the new Todo's Id |
-| ExpectedVersion | This is used by all POST/PUT APIs to support merge/conflict resolution | After any successful (OK 200) POST/PUT call, this is incremented by one |  
 
 # Use Case Overview
 
@@ -497,17 +504,19 @@ graph LR
 
 `TodoAggregate` manages the state and enforces domain validation logic. In short, any change can be made while the Todo is `incomplete`. But when it's `complete` nothing can be changed unless it is marked as `incomplete` again. See below: 
 
+```mermaid
 stateDiagram-v2
     [*] --> Incomplete : TodoCreated
     Incomplete --> Incomplete : TodoNameTextInserted<br>TodoNameTextDeleted<br>TodoDescriptionTextInserted<br>TodoDescriptionTextDeleted<br>TodoDueDateUpdated
     Incomplete --> Completed : TodoCompleteMarked
     Completed --> Incomplete : TodoCompleteUnmarked
-    
+```
 
 # Github Action CI/CD Process
 
 Github action workflow: https://github.com/stktung/SleekFlow.Todo/blob/master/.github/workflows/azure-container-webapp.yml
 
+```mermaid
 graph LR
     Local[Local Machine]
     Github[(Github)]
@@ -523,3 +532,4 @@ graph LR
     GA -- 6. request Azure App Service to deploy --> AppService
     GCR -- 7. pull image --> AppService
     AppService -- 8. run image --> AppService
+```
